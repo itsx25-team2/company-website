@@ -64,7 +64,7 @@ jobs:
         uses: tailscale/github-action@v4
         with:
           authkey: ${{ steps.generate_key.outputs.key }}
-          args: --login-server=${{ secrets.HEADSCALE_URL }}
+          args: --login-server=${{ secrets.HEADSCALE_URL }} --accept-routes=true
           version: 1.102.4
 
       - name: Verify connectivity to K3s node
