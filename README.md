@@ -1,10 +1,64 @@
-# Company Website
+# Company Website - ITSX25 Team 2
 
-A modular Flask application with Docker support.
+Detta repository innehåller Team 2:s applikation och CI/CD-flöde för Kurs 6,
+Workshop 3 Blue Team. Applikationen är byggd med Flask, paketeras som en
+container i GitHub Container Registry (GHCR) och driftsätts automatiskt till
+teamets K3s-kluster.
 
-## Local Development
+## Aktuell status
 
-Create a virtual environment and install dependencies:
+- GitHub-repot och GHCR-paketet är publika.
+- GitHub Actions bygger och publicerar containerimagen.
+- En kortlivad GitHub-runner ansluter till teamets Headscale-miljö.
+- Runnern när K3s API via subnet-routen till `10.0.2.3`.
+- Deployment, PersistentVolumeClaim och Service är applicerade i K3s.
+- Podden är verifierad som `Running` och `/healthz` rapporterar en frisk
+  applikation med databasanslutning.
+- `main` skyddas med branch protection och krav på två godkännanden.
+
+Den tekniska setupen för Workshop 3 är klar. Nästa kursmoment är defensiv
+analys av applikationen och dokumentation av observationer och åtgärdsförslag.
+
+## Viktiga filer
+
+- [.github/workflows/deploy.yml](.github/workflows/deploy.yml): bygger imagen,
+  ansluter en tillfällig runner till Headscale och driftsätter till K3s.
+- [k8s/deployment.yaml](k8s/deployment.yaml): applikationens Deployment.
+- [k8s/pvc.yaml](k8s/pvc.yaml): persistent lagring för SQLite-data.
+- [k8s/service.yaml](k8s/service.yaml): intern Kubernetes Service.
+- [k8s/github-permissions.yaml](k8s/github-permissions.yaml): RBAC för
+  GitHub-deployern; appliceras manuellt som engångskonfiguration.
+- [scripts/generate-kubeconfig.sh](scripts/generate-kubeconfig.sh): genererar
+  en begränsad kubeconfig för CI/CD.
+- [docs/](docs/): backlog, status, guider och gemensamma sammanfattningar.
+- [members/](members/): personliga anteckningar och arbetssammanfattningar.
+
+## Dokumentation
+
+- [Dokumentationsöversikt](docs/README.md)
+- [Produktbacklog](docs/product_backlog.md)
+- [Workshop 3 - setup och verifiering](docs/workshop3_setup_status.md)
+- [Teamsammanfattning 2026-09-21](docs/team_work_summary_2026-09-21.md)
+
+## Arbetsflöde
+
+1. Skapa eller välj ett GitHub Issue.
+2. Arbeta från en egen branch, exempelvis `member/itzmejonny92` eller en kort
+   feature-branch.
+3. Gör en liten och tydligt avgränsad ändring.
+4. Kör relevanta tester lokalt.
+5. Pusha branchen och skapa en pull request mot `main`.
+6. Kontrollera CI-resultatet.
+7. Låt minst två medlemmar granska och godkänna.
+8. Merga till `main` och verifiera deploymenten.
+9. Uppdatera Issue och backlog efter verifierad merge.
+
+Backlogfilen synkroniseras inte automatiskt med GitHub Issues. Den som ändrar
+ett Issue ansvarar därför för att bedöma om även backloggen ska uppdateras.
+
+## Lokal utveckling
+
+Skapa en virtuell miljö och installera beroenden:
 
 ```bash
 python -m venv venv
@@ -12,14 +66,14 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Copy the environment file and run the app:
+Starta applikationen:
 
 ```bash
 cp .env.example .env
 python wsgi.py
 ```
 
-Or with Flask CLI:
+Alternativt med Flask CLI:
 
 ```bash
 export PYTHONPATH=src
@@ -28,44 +82,55 @@ flask --app company_website run --port 7000
 
 ## Docker
 
-Build and run with Docker Compose:
-
 ```bash
 docker compose up --build
 ```
 
-The SQLite database is persisted in a Docker volume (`app-data`).
+SQLite-databasen sparas i Docker-volymen `app-data`. I K3s används i stället
+en PersistentVolumeClaim monterad på `/app/data`.
 
-For Kubernetes (k3s), replace the Docker volume with a PersistentVolumeClaim pointing to `/app/data`.
-
-## Tests
-
-Run tests with pytest:
+## Tester
 
 ```bash
 pytest
 ```
 
-## Project Structure
+## Deployment
 
-```
+En push till `main` eller en manuell `workflow_dispatch` startar pipelinen:
+
+1. Koden checkas ut.
+2. En containerimage byggs och publiceras i GHCR.
+3. En kortlivad Headscale-nyckel skapas.
+4. GitHub-runnern ansluter med taggen `tag:github-runner`.
+5. Subnet-route och TCP 6443 till K3s verifieras.
+6. Kubernetes-manifesten appliceras och rollout kontrolleras.
+
+Workflowet använder GitHub Secrets och Variables. Hemliga värden får aldrig
+skrivas i dokumentation, Issues, loggar eller commits.
+
+## Projektstruktur
+
+```text
 .
-├── src/
-│   └── company_website/
-│       ├── __init__.py
-│       ├── app.py          # Flask app factory
-│       ├── config.py       # Configuration
-│       ├── db.py           # Database helpers & migrations
-│       ├── models.py       # Data models
-│       ├── auth.py         # Authentication blueprint
-│       ├── routes.py       # Main blueprint
-│       ├── migrations/
-│       ├── templates/
-│       └── static/
-├── tests/
-├── wsgi.py
-├── Dockerfile
-├── docker-compose.yml
-├── requirements.txt
-└── .env.example
+|-- .github/workflows/
+|-- docs/
+|-- k8s/
+|-- members/
+|-- scripts/
+|-- src/company_website/
+|-- tests/
+|-- Dockerfile
+|-- docker-compose.yml
+|-- requirements.txt
+`-- wsgi.py
 ```
+
+## Säkerhet
+
+- Använd aldrig riktiga credentials i kod eller dokumentation.
+- Kontrollera `git status` och diffen före varje commit.
+- Kubeconfig och Headscale API-nyckel lagras endast som GitHub Secrets.
+- Den tillfälliga CI-noden får endast den åtkomst som behövs för deployment.
+- Kursens analys genomförs endast i de miljöer som utbildaren har godkänt.
+- Flaggar dokumenteras inte öppet i gemensamma filer.
