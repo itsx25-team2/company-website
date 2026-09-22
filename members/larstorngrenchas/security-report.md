@@ -1,5 +1,11 @@
 # Säkerhetsrapport
 
+## Executive Summary
+
+Detta projekt har flera allvarliga säkerhetsbrister som tillsammans utgör en hög risk för konfidentialitet, integritet och autentisering. Den mest kritiska problemet är SQL-injection i login-flödet, följt av felaktig lösenordshantering, hårdkodade hemligheter, bristande auktorisation och exponering av känslig intern information i seed-data. Om systemet används i en verklig miljö med användardata eller produktionsdata kan detta leda till obehörig åtkomst, dataläckage och manipulation av användarkonton.
+
+Det rekommenderas att projektet inte deployas eller användas med riktiga användare förrän de viktigaste sårbarheterna är åtgärdade. En genomgripande säkringsprocess krävs innan systemet kan anses vara säkert nog för produktion.
+
 ## Sammanfattning
 
 Detta projekt innehåller flera tydliga och allvarliga säkerhetsbrister i autentisering, auktorisation, datalagring och konfiguration. Den största risken kommer från SQL-injection i login-flödet, felaktig lösenordshantering, hårdkodade hemligheter och brist på åtkomstkontroll i profil- och användardata. Projektet är inte säkert för produktion och bör betraktas som högrisk om det används i en verklig miljö.
