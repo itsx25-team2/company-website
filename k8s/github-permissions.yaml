@@ -2,34 +2,47 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: github-deployer
+  namespace: default # Inserted namespace
 ---
-apiVersion: v1
-kind: Secret
-metadata:
-  name: github-deployer-token
-  annotations:
-    kubernetes.io/service-account.name: github-deployer
-type: kubernetes.io/service-account-token
+#apiVersion: v1
+#kind: Secret
+#metadata:
+#  name: github-deployer-token
+#  annotations:
+#    kubernetes.io/service-account.name: github-deployer
+#type: kubernetes.io/service-account-token
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: github-deployer-role
+  namespace: default # Inserted namespace
 rules:
-- apiGroups: [""]
-  resources: ["configmaps", "persistentvolumeclaims", "secrets", "services", "pods", "events"]
-  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
-- apiGroups: ["apps"]
-  resources: ["deployments"]
-  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: [
+        #  "configmaps",
+        "persistentvolumeclaims",
+        #  "secrets",
+        "services",
+        "pods",
+        "events",
+      ]
+    #verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    #verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: github-deployer-binding
+  namespace: default # Inserted namespace
 subjects:
-- kind: ServiceAccount
-  name: github-deployer
+  - kind: ServiceAccount
+    name: github-deployer
+    namespace: default # Inserted namespace
 roleRef:
   kind: Role
   name: github-deployer-role
