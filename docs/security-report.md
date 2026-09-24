@@ -4,7 +4,7 @@
 
 Detta projekt har flera allvarliga säkerhetsbrister som tillsammans utgör en hög risk för konfidentialitet, integritet och autentisering. Den mest kritiska problemet är SQL-injection i login-flödet, följt av felaktig lösenordshantering, hårdkodade hemligheter, bristande auktorisation och exponering av känslig intern information i seed-data. Om systemet används i en verklig miljö med användardata eller produktionsdata kan detta leda till obehörig åtkomst, dataläckage och manipulation av användarkonton.
 
-Det rekommenderas att projektet inte deployas eller användas med riktiga användare förrän de viktigaste sårbarheterna är åtgärdade. En genomgripande säkringsprocess krävs innan systemet kan anses vara säkert nog för produktion.
+Det rekommenderas att projektet inte deployas eller används med riktiga användare förrän de viktigaste sårbarheterna är åtgärdade. En genomgripande säkringsprocess krävs innan systemet kan anses vara säkert nog för produktion.
 
 ## Sammanfattning
 
@@ -15,7 +15,7 @@ Detta projekt innehåller flera tydliga och allvarliga säkerhetsbrister i auten
 Granskningen omfattar den Flask-baserade webbapplikationen i projektet, inklusive:
 
 - autentisering i [src/company_website/auth.py](src/company_website/auth.py)
-- routings och profiloperationer i [src/company_website/routes.py](src/company_website/routes.py)
+- routing och profiloperationer i [src/company_website/routes.py](src/company_website/routes.py)
 - konfiguration i [src/company_website/config.py](src/company_website/config.py)
 - databasinitiering i [src/company_website/db.py](src/company_website/db.py)
 - seed-data i [src/company_website/migrations/002_seed_data.sql](src/company_website/migrations/002_seed_data.sql) och [src/company_website/migrations/004_seed_user_profiles.sql](src/company_website/migrations/004_seed_user_profiles.sql)
@@ -90,7 +90,7 @@ Koden använder inte ett korrekt lösenordsflöde. Istället för att verifiera 
 SECRET_KEY = 'dev-secret-key'
 ```
 
-Detta är inte lämpligt för produktionsmiljöer. Flask-sessioner och cookies är otillräckligt skyddade om `SECRET_KEY` är välkänd eller statisk i koden.
+Detta är mycket olämpligt för produktionsmiljöer. Flask-sessioner och cookies är otillräckligt skyddade om `SECRET_KEY` är välkänd eller statisk i koden.
 
 **Konsekvens:**
 - Session hijacking
@@ -155,9 +155,9 @@ Detta visar att känslig information lagras i versionerad kod och kan exponeras 
 - Ökad risk för insider- och externa attacker
 
 **Rekommenderad åtgärd:**
-- Ta bort all intern information från versionerad kod.
-- Använd separata miljövariabler/secret storage för hemligheter.
-- Exponera aldrig känsliga uppgifter i databasseed-data.
+- Ta bort all intern information från kod (även tidigare versioner).
+- Använd separata miljövariabler/säker lösenordshantering för hemligheter.
+- Exponera aldrig känsliga uppgifter i seed-data.
 
 ---
 
@@ -167,16 +167,16 @@ Detta visar att känslig information lagras i versionerad kod och kan exponeras 
 **Källkod:** [src/company_website/routes.py](src/company_website/routes.py)  
 **Risknivå:** Hög
 
-Profiluppdatering sker via `POST` utan CSRF-token eller skydd. Detta gör att en angripare kan försöka få en inloggad användare att skicka en skadlig förfrågan utan att veta det.
+Profiluppdatering sker via `POST` utan CSRF-token eller skydd. Detta gör att en angripare kan försöka få en inloggad användare att skicka en skadlig förfrågan utan att förstå det.
 
 **Konsekvens:**
-- Oautentiserade ändringar i användardata
+- Icke autentiserade ändringar i användardata
 - Förfalskade uppdateringar
 - Potentiell manipulation av användarprofiler
 
 **Rekommenderad åtgärd:**
 - Använd Flask-WTF eller en likvärdig CSRF-skyddslösning.
-- Inkludera CSRF-token i formulär och verifiera det server-side.
+- Inkludera CSRF-token i formulär och verifiera på server-sidan.
 
 ---
 
@@ -195,7 +195,7 @@ Flask använder standardinställningar om inget specificeras, och det är inte t
 
 **Konsekvens:**
 - Session theft
-- Cross-site scripting risker förvärras
+- Förvärrad risk för ross-site scripting
 - Cookies kan exfiltreras i osäkra miljöer
 
 **Rekommenderad åtgärd:**
@@ -210,7 +210,7 @@ Flask använder standardinställningar om inget specificeras, och det är inte t
 **Källkod:** [src/company_website/db.py](src/company_website/db.py)  
 **Risknivå:** Medium
 
-Projektet använder SQLite med en lokal fil i filsystemet. Det fungerar för demo eller små applikationer, men är inte ersättning för en databas som stöder säkerhet, åtkomstkontroll, säkra autentiseringsmekanismer och production-grade drift.
+Projektet använder SQLite med en lokal fil i filsystemet. Det fungerar för demo eller små applikationer, men är inte ersättning för en databas som stöder säkerhet, åtkomstkontroll, säkra autentiseringsmekanismer och drift med production-grade.
 
 **Konsekvens:**
 - Mindre säkert i produktionsmiljöer
@@ -253,7 +253,7 @@ Dessa problem tillsammans gör att applikationen inte bör användas med riktiga
 2. Implementera korrekt lösenordshashning och verifiering.
 3. Flytta alla hemligheter till miljövariabler.
 4. Lägg in strikt åtkomstkontroll i profilredigering.
-5. Lägg till CSRF-skydd på alla state-changing formulär.
+5. Lägg till CSRF-skydd på alla formulär med state-changing.
 6. Ta bort känslig data från SQL-migrationer.
 7. Använd en produktionstestad databas och säkra cookie-inställningar.
 8. Gör en sekundär kodgranskning efter patchning.
@@ -264,6 +264,6 @@ Projektet innehåller flera tydliga säkerhetsproblem som inte kan ignoreras. De
 
 ## Dokumentinformation
 
-- Version: 1.0
-- Datum: 2026-09-22
+- Version: 2.0
+- Datum: 2026-09-24
 - Status: Öppen – kräver omedelbar säkerhetsåtgärd
