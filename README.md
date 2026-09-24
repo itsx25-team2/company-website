@@ -20,6 +20,8 @@ teamets K3s-kluster.
 - Åtkomst via MagicDNS och Ingress är verifierad med HTTP-status `200`.
 - Cosign-enforcement är aktivt i namespace `default`. En osignerad testimage
   nekades medan Team 2:s signerade digest godkändes.
+- Rollback till en tidigare signerad digest och återställning till den senaste
+  versionen är verifierade med redo pod och HTTP-status `200`.
 
 Den tekniska setupen för Workshop 3 är klar. Defensiv analys av applikationen
 har påbörjats och observationer dokumenteras utan credentials eller
