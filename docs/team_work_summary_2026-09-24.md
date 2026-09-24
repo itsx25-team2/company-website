@@ -150,3 +150,14 @@ health check mot senaste `main`:
 En extra direkt K3s-läsning via personlig SSH stoppades av lokal OS Login-
 nyckelautentisering. Ingen serverkonfiguration ändrades. Rollouten verifierades
 i stället av den gröna workflowloggen och de fungerande live-endpointsen.
+
+## Gruppens CTF-resultat
+
+Lars Törngren löste den sista flaggan i den godkända kursmiljön. Han bekräftade
+att login-funktionen var sårbar för SQL-injektion, använde `sqlmap` med de
+uppgifter som gruppen hade tilldelats och upptäckte tabellen `legacy_users`.
+Där kunde hypotesen om användaren `flag` verifieras.
+
+Den fullständiga arbetsgången finns i
+[Lasses CTF-anteckning](https://github.com/itsx25-team2/kurs6-team2-infra/blob/main/members/larstorngrenchas/flags_lt_2026-09-24.md).
+Flaggvärdet återges inte i dokumentationen.
