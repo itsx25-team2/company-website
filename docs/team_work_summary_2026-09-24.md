@@ -128,3 +128,25 @@ digest som körs i Kubernetes.
 - Därefter återställdes deploymenten till `fd41c7c`; slutläget var `1/1` redo
   repliker och HTTP `200`.
 - APP-08 är markerad som `Done` efter mergad dokumentation och stängd Issue #3.
+
+## Efterkontroll efter senaste merge
+
+Efter att PR #18 och PR #19 hade godkänts och mergats genomfördes en ny
+health check mot senaste `main`:
+
+- [Deploy to K3s #36050751136](https://github.com/itsx25-team2/company-website/actions/runs/36050751136)
+  lyckades för mergecommit `f1bc921`.
+- GitHub Actions byggde och signerade imagen, anslöt via Headscale och nådde
+  K3s API över subnet-routen.
+- Deploymenten uppdaterades till digest
+  `sha256:c4bc87f7c97bbd5c70b6eb6b266822f1fc1047b5472bde1f1010f8048a01d1b9`.
+- Kubernetes rapporterade att `company-website` rullades ut framgångsrikt.
+- Den lokala testsviten gav `5 passed`.
+- `company-website.team2.arpa` löstes till `10.0.2.3`.
+- `/healthz` svarade HTTP `200` med status `healthy` och databas
+  `connected`.
+- Startsidan svarade HTTP `200`.
+
+En extra direkt K3s-läsning via personlig SSH stoppades av lokal OS Login-
+nyckelautentisering. Ingen serverkonfiguration ändrades. Rollouten verifierades
+i stället av den gröna workflowloggen och de fungerande live-endpointsen.

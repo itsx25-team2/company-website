@@ -21,6 +21,9 @@ och defensiva analyser i projektet.
   signerade digest godkändes.
 - Rollback till föregående signerade digest och återställning till den senaste
   versionen är verifierade med `1/1` redo repliker och HTTP `200`.
+- PR #18 och PR #19 är mergade. Senaste deploy från `main` lyckades, den
+  lokala testsviten gav `5 passed` och live `/healthz` rapporterade status
+  `healthy` med ansluten databas.
 
 ## Relaterad infra-dokumentation
 
