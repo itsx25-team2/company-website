@@ -16,8 +16,10 @@ teamets K3s-kluster.
   applikation med databasanslutning.
 - `main` skyddas med branch protection och krav på två godkännanden.
 
-Den tekniska setupen för Workshop 3 är klar. Nästa kursmoment är defensiv
-analys av applikationen och dokumentation av observationer och åtgärdsförslag.
+Den tekniska setupen för Workshop 3 är klar. Defensiv analys av applikationen
+har påbörjats och observationer dokumenteras utan credentials eller
+flaggvärden. Åtgärdsförslag hanteras via Issues, backlog, branch och pull
+request.
 
 ## Viktiga filer
 
@@ -39,6 +41,19 @@ analys av applikationen och dokumentation av observationer och åtgärdsförslag
 - [Produktbacklog](docs/product_backlog.md)
 - [Workshop 3 - setup och verifiering](docs/workshop3_setup_status.md)
 - [Teamsammanfattning 2026-09-21](docs/team_work_summary_2026-09-21.md)
+
+## Relaterad infrastruktur
+
+Applikationens GCP-, Headscale-, nätverks- och K3s-infrastruktur hanteras i det
+separata [infra-repot](https://github.com/itsx25-team2/kurs6-team2-infra).
+
+- [Gemensam anslutningsguide](https://github.com/itsx25-team2/kurs6-team2-infra/blob/main/docs/gemensam_anslutningsguide.md)
+- [Infra-repots README](https://github.com/itsx25-team2/kurs6-team2-infra/blob/main/README.md)
+- [Infra-backlog](https://github.com/itsx25-team2/kurs6-team2-infra/blob/main/docs/product_backlog.md)
+
+Normal åtkomst till privata resurser sker via personliga Tailscale-noder,
+annonserade subnet-rutter och Split DNS. SOCKS5 är endast en dokumenterad
+reservmetod.
 
 ## Arbetsflöde
 
