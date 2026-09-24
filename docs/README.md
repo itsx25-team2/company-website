@@ -11,6 +11,8 @@ Workshop 3.
   verifieringar och kvarvarande uppföljning.
 - [team_work_summary_2026-09-21.md](team_work_summary_2026-09-21.md):
   sammanfattning av dagens gemensamma arbete.
+- [team_work_summary_2026-09-24.md](team_work_summary_2026-09-24.md):
+  Ingress, image-spårbarhet, Cosign och verifierad aktuell status.
 
 ## Rutin
 

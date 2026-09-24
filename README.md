@@ -15,6 +15,12 @@ teamets K3s-kluster.
 - Podden är verifierad som `Running` och `/healthz` rapporterar en frisk
   applikation med databasanslutning.
 - `main` skyddas med branch protection och krav på två godkännanden.
+- `ingress-nginx` är installerat och routar det interna namnet
+  `company-website.team2.arpa` till applikationens Service.
+- Åtkomst via MagicDNS och Ingress är verifierad med HTTP-status `200`.
+- Policy-controller är installerad, men image-enforcement aktiveras först
+  efter att den nya Cosign-pipelinen har producerat och verifierat en signerad
+  image.
 
 Den tekniska setupen för Workshop 3 är klar. Defensiv analys av applikationen
 har påbörjats och observationer dokumenteras utan credentials eller
@@ -28,8 +34,12 @@ request.
 - [k8s/deployment.yaml](k8s/deployment.yaml): applikationens Deployment.
 - [k8s/pvc.yaml](k8s/pvc.yaml): persistent lagring för SQLite-data.
 - [k8s/service.yaml](k8s/service.yaml): intern Kubernetes Service.
+- [k8s/ingress.yaml](k8s/ingress.yaml): hostbaserad routing för
+  `company-website.team2.arpa`.
 - [k8s/github-permissions.yaml](k8s/github-permissions.yaml): RBAC för
   GitHub-deployern; appliceras manuellt som engångskonfiguration.
+- [k8s/image-policy.yaml](k8s/image-policy.yaml): Cosign-policy för images
+  signerade av Team 2:s deploy-workflow på `main`.
 - [scripts/generate-kubeconfig.sh](scripts/generate-kubeconfig.sh): genererar
   en begränsad kubeconfig för CI/CD.
 - [docs/](docs/): backlog, status, guider och gemensamma sammanfattningar.
@@ -41,6 +51,7 @@ request.
 - [Produktbacklog](docs/product_backlog.md)
 - [Workshop 3 - setup och verifiering](docs/workshop3_setup_status.md)
 - [Teamsammanfattning 2026-09-21](docs/team_work_summary_2026-09-21.md)
+- [Teamsammanfattning 2026-09-24](docs/team_work_summary_2026-09-24.md)
 
 ## Relaterad infrastruktur
 
@@ -115,11 +126,14 @@ pytest
 En push till `main` eller en manuell `workflow_dispatch` startar pipelinen:
 
 1. Koden checkas ut.
-2. En containerimage byggs och publiceras i GHCR.
-3. En kortlivad Headscale-nyckel skapas.
-4. GitHub-runnern ansluter med taggen `tag:github-runner`.
-5. Subnet-route och TCP 6443 till K3s verifieras.
-6. Kubernetes-manifesten appliceras och rollout kontrolleras.
+2. Metadata för `latest` och aktuell commit-SHA skapas.
+3. Containerimagen byggs, publiceras i GHCR och identifieras med digest.
+4. Imagen signeras nyckellöst med Cosign och GitHub OIDC.
+5. En kortlivad Headscale-nyckel skapas.
+6. GitHub-runnern ansluter med taggen `tag:github-runner`.
+7. Subnet-route och TCP 6443 till K3s verifieras.
+8. Kubernetes-manifesten, inklusive Ingress, appliceras.
+9. Rollout till den signerade imagen verifieras.
 
 Workflowet använder GitHub Secrets och Variables. Hemliga värden får aldrig
 skrivas i dokumentation, Issues, loggar eller commits.
@@ -147,5 +161,9 @@ skrivas i dokumentation, Issues, loggar eller commits.
 - Kontrollera `git status` och diffen före varje commit.
 - Kubeconfig och Headscale API-nyckel lagras endast som GitHub Secrets.
 - Den tillfälliga CI-noden får endast den åtkomst som behövs för deployment.
+- Images taggas för spårbarhet, deployas med digest och signeras nyckellöst
+  med Cosign.
+- Policy-enforcement aktiveras först efter verifierad signering för att
+  undvika att blockera en giltig rollout.
 - Kursens analys genomförs endast i de miljöer som utbildaren har godkänt.
 - Flaggar dokumenteras inte öppet i gemensamma filer.
