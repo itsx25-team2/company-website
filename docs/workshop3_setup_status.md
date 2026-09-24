@@ -44,7 +44,7 @@ Ingress, spårbara images och Cosign-enforcement.
 
 ## GitHub Actions
 
-Senast verifierad körning:
+Körning som användes som senaste version i rollback-testet:
 
 - Run ID: `36004073657`
 - Commit: `7308ba0afe3494b3c991789ad1a284f162f8bcf5`

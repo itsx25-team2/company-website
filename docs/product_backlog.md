@@ -38,7 +38,7 @@ Backlogfilen synkroniseras inte automatiskt med GitHub Issues.
 ## Slutförda GitHub Issues
 
 - APP-08: [Issue #3](https://github.com/itsx25-team2/company-website/issues/3) är tekniskt slutförd genom verifierad rollback och återställning 2026-09-24.
-- APP-09: [Issue #9](https://github.com/itsx25-team2/company-website/issues/9) är tekniskt slutförd genom PR #16 och kan stängas när denna backlogguppdatering har mergats.
+- APP-09: [Issue #9](https://github.com/itsx25-team2/company-website/issues/9) är slutförd genom PR #16 och verifierad med HTTP `200` via Ingress.
 
 ## Verifiering 2026-09-24
 
