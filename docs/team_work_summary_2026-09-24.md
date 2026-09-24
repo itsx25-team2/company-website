@@ -1,5 +1,10 @@
 # Team 2 - arbetssammanfattning 2026-09-24
 
+## Närvaro
+
+- Närvarande: Jonny Nguyen, Tim Rundquist, Lars Torngren och Wilibroad Ngebi.
+- Frånvarande: Fajk Zhupa och Amin Mahamoud.
+
 ## Omfattning
 
 Dagens del av Workshop 3.5-4 flyttade `company-website` från direkt bindning
@@ -122,4 +127,4 @@ digest som körs i Kubernetes.
 - Den äldre versionen blev `Ready` och svarade med HTTP `200` via Ingress.
 - Därefter återställdes deploymenten till `fd41c7c`; slutläget var `1/1` redo
   repliker och HTTP `200`.
-- APP-08 kan därför markeras som `Done` efter merge av dokumentationen.
+- APP-08 är markerad som `Done` efter mergad dokumentation och stängd Issue #3.

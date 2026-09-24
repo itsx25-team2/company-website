@@ -8,6 +8,7 @@ och defensiva analyser i projektet.
 | Dokument | Innehåll |
 | --- | --- |
 | [Arbetssammanfattning 2026-09-21](work_summary_2026-09-21.md) | Individuellt arbete med applikationsrepot, K3s-driftsättning och säker dokumentation. |
+| [Arbetssammanfattning 2026-09-24](work_summary_2026-09-24.md) | Individuellt arbete med MagicDNS, Ingress, image-spårbarhet, Cosign-policy och verifierad rollback. |
 | [Teamsammanfattning 2026-09-24](../../docs/team_work_summary_2026-09-24.md) | Dagens verifierade arbete med MagicDNS, Ingress, image-spårbarhet och Cosign. |
 
 ## Aktuell status 2026-09-24
