@@ -117,5 +117,9 @@ digest som körs i Kubernetes.
   godkänns av policyn.
 - Uppdatera policyidentiteten kontrollerat om workflowfilens namn eller branch
   ändras.
-- Dokumentera rollback innan policyn skärps eller fler workloads läggs i
-  namespace `default`.
+- Rollback testades från den senaste signerade digesten `fd41c7c` till den
+  tidigare signerade digesten `a8c98ac`.
+- Den äldre versionen blev `Ready` och svarade med HTTP `200` via Ingress.
+- Därefter återställdes deploymenten till `fd41c7c`; slutläget var `1/1` redo
+  repliker och HTTP `200`.
+- APP-08 kan därför markeras som `Done` efter merge av dokumentationen.

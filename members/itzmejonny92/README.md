@@ -18,6 +18,8 @@ och defensiva analyser i projektet.
   signerade digest som byggdes körs i Kubernetes.
 - Cosign-enforcement är aktivt. En osignerad testimage nekades och Team 2:s
   signerade digest godkändes.
+- Rollback till föregående signerade digest och återställning till den senaste
+  versionen är verifierade med `1/1` redo repliker och HTTP `200`.
 
 ## Relaterad infra-dokumentation
 

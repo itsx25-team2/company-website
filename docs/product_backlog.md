@@ -11,7 +11,7 @@ Senast uppdaterad: 2026-09-24
 | APP-05 | Hög | To do | Analysera placeholder-flaggor i den egna kursmiljön | Observationer är verifierade och dokumenterade utan att exponera flaggvärden |
 | APP-06 | Hög | To do | Genomför defensiv analys av den skarpa kursmiljön | Endast godkända kursmål analyseras och resultatet dokumenteras |
 | APP-07 | Medel | To do | Dokumentera fynd, risk och rekommenderad åtgärd | Varje fynd har bevis, konsekvens, osäkerhet och defensivt åtgärdsförslag |
-| APP-08 | Medel | In progress | Gör image-deployment reproducerbar med unik image-tagg | Varje commit deployar en identifierbar image och rollback är dokumenterad och verifierad |
+| APP-08 | Medel | Done | Gör image-deployment reproducerbar med unik image-tagg | Varje commit deployar en identifierbar image och rollback är dokumenterad och verifierad |
 | APP-09 | Medel | Done | Ersätt `hostPort` med Kubernetes Ingress | En ny signerad version har rullats ut utan portkonflikt och ger HTTP `200` via Ingress |
 | APP-10 | Medel | In progress | Gör Headscale-policyinstallationen reproducerbar | Policyfilen installeras med `root:headscale`, läge `640`, valideras och laddas om |
 | APP-11 | Låg | To do | Följ upp varningar från GitHub Actions | Node-runtime och authkey-varning är bedömda och dokumenterade |
@@ -31,13 +31,13 @@ Backlogfilen synkroniseras inte automatiskt med GitHub Issues.
 - APP-05: [Issue #6](https://github.com/itsx25-team2/company-website/issues/6)
 - APP-06: [Issue #8](https://github.com/itsx25-team2/company-website/issues/8)
 - APP-07: [Issue #10](https://github.com/itsx25-team2/company-website/issues/10)
-- APP-08: [Issue #3](https://github.com/itsx25-team2/company-website/issues/3)
 - APP-10: [Issue #4](https://github.com/itsx25-team2/company-website/issues/4)
 - APP-11: [Issue #7](https://github.com/itsx25-team2/company-website/issues/7)
 - APP-12: [Issue #5](https://github.com/itsx25-team2/company-website/issues/5)
 
 ## Slutförda GitHub Issues
 
+- APP-08: [Issue #3](https://github.com/itsx25-team2/company-website/issues/3) är tekniskt slutförd genom verifierad rollback och återställning 2026-09-24.
 - APP-09: [Issue #9](https://github.com/itsx25-team2/company-website/issues/9) är tekniskt slutförd genom PR #16 och kan stängas när denna backlogguppdatering har mergats.
 
 ## Verifiering 2026-09-24
@@ -48,3 +48,7 @@ Backlogfilen synkroniseras inte automatiskt med GitHub Issues.
 - Cosign verifierade signaturen mot Team 2:s deploy-workflow på `main`.
 - Policy-controller nekade en osignerad testimage och godkände den signerade
   Team 2-digesten med server-side dry-run.
+- Rollback från digest `fd41c7c` till den tidigare signerade digesten
+  `a8c98ac` lyckades. Applikationen var `Ready` och svarade med HTTP `200`.
+- Deploymenten återställdes därefter till `fd41c7c`; även slutkontrollen gav
+  `1/1` redo repliker och HTTP `200`.

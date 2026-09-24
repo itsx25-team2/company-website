@@ -26,6 +26,7 @@ Ingress, spårbara images och Cosign-enforcement.
 | K3s workload | Klar | Podden är `Running`, PVC är `Bound` och rätt digest är driftsatt |
 | Cosign | Klar | Signaturen verifierades mot GitHub Actions OIDC och rätt workflowidentitet |
 | Image-policy | Klar | Osignerad image nekades och Team 2:s signerade digest godkändes |
+| Rollback | Klar | Föregående signerad digest driftsattes och den senaste versionen återställdes; båda gav HTTP `200` |
 
 ## Viktiga lärdomar
 
@@ -45,21 +46,19 @@ Ingress, spårbara images och Cosign-enforcement.
 
 Senast verifierad körning:
 
-- Run ID: `36001856279`
-- Commit: `9378fc752c0436052e4c90a3685c81f1dfdb88ce`
-- Image digest: `sha256:a8c98ac624c8e03bce0b63c341f7df71509ad2669428ccd89f613774e721d2c0`
+- Run ID: `36004073657`
+- Commit: `7308ba0afe3494b3c991789ad1a284f162f8bcf5`
+- Image digest: `sha256:fd41c7cd5b5dbd7730fed21c869228e1e2ffeb769c61aefea96052a455fb779d`
 - Resultat: godkänd
 - Metadata, build, Cosign-signering, Headscale, route, kubeconfig, Ingress och
   deployment passerade.
 
 ## Kvarvarande arbete
 
-1. Dokumentera och verifiera rollback till en tidigare signerad digest i
-   APP-08/issue #3.
-2. Analysera applikationen i den egna godkända kursmiljön.
-3. Dokumentera observationer, risker och defensiva åtgärdsförslag.
-4. Genomför endast godkända moment mot den skarpa kursmiljön.
-5. Följ framtida deployer och uppdatera Cosign-policyn kontrollerat om workflow
+1. Analysera applikationen i den egna godkända kursmiljön.
+2. Dokumentera observationer, risker och defensiva åtgärdsförslag.
+3. Genomför endast godkända moment mot den skarpa kursmiljön.
+4. Följ framtida deployer och uppdatera Cosign-policyn kontrollerat om workflow
    eller branch ändras.
 
 Hemliga värden och flaggvärden ska inte dokumenteras i detta repository.
