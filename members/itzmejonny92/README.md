@@ -14,10 +14,10 @@ och defensiva analyser i projektet.
 
 - `company-website.team2.arpa` svarar med HTTP `200` via Headscale MagicDNS
   och Kubernetes Ingress.
-- Ingress-, pipeline- och Cosign-ändringarna är lokalt committade på
-  `member/itzmejonny92`.
-- Policy-controller är installerad, men enforcement väntar tills en signerad
-  image har verifierats efter merge.
+- Ingress-, pipeline- och Cosign-ändringarna är mergade via PR #16 och den
+  signerade digest som byggdes körs i Kubernetes.
+- Cosign-enforcement är aktivt. En osignerad testimage nekades och Team 2:s
+  signerade digest godkändes.
 
 ## Relaterad infra-dokumentation
 

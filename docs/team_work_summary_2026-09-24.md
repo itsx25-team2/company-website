@@ -90,12 +90,13 @@ HTTP 200 från Jonnys WSL-klient via MagicDNS
 Ingress-controller, webbdeployment och policy-controller var `Running` vid
 slutkontrollen.
 
-## Säkerhetsläge
+## Enforcement-verifiering
 
-- Namespace `default` har ännu inte märkts för policy-enforcement.
-- `ClusterImagePolicy` har validerats men inte applicerats.
-- Det förhindrar att nuvarande osignerade image eller nästa rollout blockeras
-  innan den nya signeringspipelinen är verifierad.
+- `ClusterImagePolicy` `verify-company-website` är applicerad.
+- Namespace `default` har labeln `policy.sigstore.dev/include=true`.
+- En server-side dry-run med osignerad `alpine:latest` nekades som förväntat.
+- Team 2:s signerade image-digest godkändes i server-side dry-run.
+- Den befintliga webbdeploymenten fortsatte vara `Running` och gav HTTP `200`.
 - Inga credentials, tokens eller flaggvärden har lagts i Git.
 
 ## Git-status
@@ -106,15 +107,15 @@ Följande commits finns på `member/itzmejonny92`:
 - `6fb9751` - image-taggar, metadata och digest-baserad deployment.
 - `94acaa2` - Cosign-signering och image-policy.
 
-Ändringarna ska granskas via pull request. Ingen direktpush till `main` har
-gjorts.
+Ändringarna mergades till `main` via PR #16 i mergecommit `9378fc7`.
+Deploy-workflowen slutfördes och den signerade digest som byggdes är samma
+digest som körs i Kubernetes.
 
-## Återstående arbete
+## Uppföljning
 
-1. Pusha medlemsbranchen och skapa en pull request.
-2. Granska och merga efter godkända kontroller och medlemsgranskning.
-3. Verifiera att workflowen bygger, signerar och deployar rätt digest.
-4. Verifiera Cosign-signaturen mot GitHub Actions-identiteten.
-5. Applicera `k8s/image-policy.yaml` och märk namespace `default` först därefter.
-6. Bekräfta att en osignerad testimage nekas och att Team 2:s signerade image
-   godkänns.
+- Följ nästa deploy-workflow och bekräfta att signerade framtida digests
+  godkänns av policyn.
+- Uppdatera policyidentiteten kontrollerat om workflowfilens namn eller branch
+  ändras.
+- Dokumentera rollback innan policyn skärps eller fler workloads läggs i
+  namespace `default`.

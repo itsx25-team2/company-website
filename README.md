@@ -18,9 +18,8 @@ teamets K3s-kluster.
 - `ingress-nginx` är installerat och routar det interna namnet
   `company-website.team2.arpa` till applikationens Service.
 - Åtkomst via MagicDNS och Ingress är verifierad med HTTP-status `200`.
-- Policy-controller är installerad, men image-enforcement aktiveras först
-  efter att den nya Cosign-pipelinen har producerat och verifierat en signerad
-  image.
+- Cosign-enforcement är aktivt i namespace `default`. En osignerad testimage
+  nekades medan Team 2:s signerade digest godkändes.
 
 Den tekniska setupen för Workshop 3 är klar. Defensiv analys av applikationen
 har påbörjats och observationer dokumenteras utan credentials eller
