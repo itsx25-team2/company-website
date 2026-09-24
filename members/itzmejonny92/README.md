@@ -8,6 +8,16 @@ och defensiva analyser i projektet.
 | Dokument | Innehåll |
 | --- | --- |
 | [Arbetssammanfattning 2026-09-21](work_summary_2026-09-21.md) | Individuellt arbete med applikationsrepot, K3s-driftsättning och säker dokumentation. |
+| [Teamsammanfattning 2026-09-24](../../docs/team_work_summary_2026-09-24.md) | Dagens verifierade arbete med MagicDNS, Ingress, image-spårbarhet och Cosign. |
+
+## Aktuell status 2026-09-24
+
+- `company-website.team2.arpa` svarar med HTTP `200` via Headscale MagicDNS
+  och Kubernetes Ingress.
+- Ingress-, pipeline- och Cosign-ändringarna är lokalt committade på
+  `member/itzmejonny92`.
+- Policy-controller är installerad, men enforcement väntar tills en signerad
+  image har verifierats efter merge.
 
 ## Relaterad infra-dokumentation
 
