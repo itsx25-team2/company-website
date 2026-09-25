@@ -52,3 +52,6 @@ Backlogfilen synkroniseras inte automatiskt med GitHub Issues.
   `a8c98ac` lyckades. Applikationen var `Ready` och svarade med HTTP `200`.
 - Deploymenten återställdes därefter till `fd41c7c`; även slutkontrollen gav
   `1/1` redo repliker och HTTP `200`.
+- Deploy-workflow `36050751136` för senaste `main`-committen `f1bc921`
+  lyckades. Rollouten slutfördes, testsviten gav `5 passed` och livekontrollen
+  gav HTTP `200` med ansluten databas.

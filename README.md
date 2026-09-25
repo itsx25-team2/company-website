@@ -22,6 +22,8 @@ teamets K3s-kluster.
   nekades medan Team 2:s signerade digest godkändes.
 - Rollback till en tidigare signerad digest och återställning till den senaste
   versionen är verifierade med redo pod och HTTP-status `200`.
+- Senaste mergade `main` (`f1bc921`) har en grön K3s-deploy. Efterkontrollen
+  gav `5 passed`, frisk databasanslutning och HTTP `200` via intern DNS.
 
 Den tekniska setupen för Workshop 3 är klar. Defensiv analys av applikationen
 har påbörjats och observationer dokumenteras utan credentials eller
