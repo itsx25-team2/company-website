@@ -19,8 +19,9 @@ autentisering, image-taggar och digest, Kubernetes Ingress, CycloneDX-SBOM,
 Cosign-attestering och förhandsvisning av e-postsignaturer.
 
 Team 2:s fungerande Headscale-, WIF-, K3s-, RBAC- och Ingress-konfiguration
-bevarades. Utbildaren har meddelat att upstream-versionen inte ändras vidare,
-vilket minskar risken för framtida mergekonflikter.
+bevarades. Utbildaren har meddelat att versionen för dagens workshop inte ändras
+vidare. Nya upstream-ändringar kan däremot tillkomma senare under kursen och
+behöver då granskas och integreras på nytt.
 
 ## Säkerhetsåtgärder
 
