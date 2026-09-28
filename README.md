@@ -1,12 +1,17 @@
 # Company Website - ITSX25 Team 2
 
 Detta repository innehåller Team 2:s applikation och CI/CD-flöde för Kurs 6,
-Workshop 3 Blue Team. Applikationen är byggd med Flask, paketeras som en
+Workshop 3 och Workshop 4 Blue Team. Applikationen är byggd med Flask, paketeras som en
 container i GitHub Container Registry (GHCR) och driftsätts automatiskt till
 teamets K3s-kluster.
 
 ## Aktuell status
 
+- Workshop 4 med CycloneDX-SBOM, attestering och säkerhetshärdning är
+  verifierad på `workshop4/instructor-sync` och väntar på PR.
+- Branchens `Application Checks` är grön med 19 tester och Docker-build.
+- Kubernetes-secreten `company-website-secrets` är provisionerad på
+  `team2-primary` utan att värdet har lagts i Git.
 - GitHub-repot och GHCR-paketet är publika.
 - GitHub Actions bygger och publicerar containerimagen.
 - En kortlivad GitHub-runner ansluter till teamets Headscale-miljö.
@@ -55,6 +60,7 @@ request.
 - [Workshop 3 - setup och verifiering](docs/workshop3_setup_status.md)
 - [Teamsammanfattning 2026-09-21](docs/team_work_summary_2026-09-21.md)
 - [Teamsammanfattning 2026-09-24](docs/team_work_summary_2026-09-24.md)
+- [Teamsammanfattning 2026-09-28](docs/team_work_summary_2026-09-28.md)
 
 ## Relaterad infrastruktur
 
