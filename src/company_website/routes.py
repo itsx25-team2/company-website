@@ -56,6 +56,7 @@ def view_profile(id):
     conn.close()
     if not row:
         return "User not found", 404
+    internal_notes = row['internal_notes'] if str(current_user.id) == str(id) else None
     user = User(
         str(row['id']),
         row['username'],
@@ -65,7 +66,7 @@ def view_profile(id):
         row['email'],
         row['about'],
         row['role'],
-        row['internal_notes'],
+        internal_notes,
         row['email_signature'],
     )
     return render_template('view_profile.html', user=user)
@@ -101,6 +102,9 @@ def email_preview(id):
 @main_bp.route('/profiles/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_profile(id):
+    if str(current_user.id) != str(id):
+        return "Forbidden", 403
+
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM users WHERE id = ?", (id,))

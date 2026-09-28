@@ -5,6 +5,8 @@ services:
       - "7000:7000"
     environment:
       - FLASK_DEBUG=false
+      - SECRET_KEY=${SECRET_KEY:?Set SECRET_KEY in .env}
+      - SESSION_COOKIE_SECURE=${SESSION_COOKIE_SECURE:-false}
     volumes:
       - app-data:/app/data
 

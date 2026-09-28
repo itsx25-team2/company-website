@@ -13,13 +13,12 @@ login_manager = LoginManager()
 def _get_legacy_user(username, password):
     conn = get_legacy_db()
     cursor = conn.cursor()
-    cursor.execute(
-        "SELECT * FROM legacy_users WHERE username = ? AND password_hash = ?",
-        (username, password),
-    )
+    cursor.execute("SELECT * FROM legacy_users WHERE username = ?", (username,))
     row = cursor.fetchone()
     conn.close()
-    return row
+    if row and check_password_hash(row['password_hash'], password):
+        return row
+    return None
 
 
 @login_manager.user_loader
@@ -29,7 +28,7 @@ def load_user(user_id):
     cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
     row = cursor.fetchone()
     conn.close()
-    if row:
+    if row and row['enabled']:
         return User(
             str(row['id']),
             row['username'],
@@ -96,7 +95,7 @@ def login():
     return render_template('login.html')
 
 
-@auth_bp.route('/logout')
+@auth_bp.route('/logout', methods=['POST'])
 @login_required
 def logout():
     logout_user()

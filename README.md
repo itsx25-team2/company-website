@@ -99,6 +99,7 @@ Starta applikationen:
 
 ```bash
 cp .env.example .env
+# Ersätt exempelvärdet för SECRET_KEY i .env, till exempel med: openssl rand -hex 32
 python wsgi.py
 ```
 
@@ -121,8 +122,12 @@ en PersistentVolumeClaim monterad på `/app/data`.
 ## Tester
 
 ```bash
-pytest
+python -m pip install -r requirements-dev.txt
+python -m pytest -q
 ```
+
+Workflowen `Application Checks` kör samma tester och en Docker-build på
+feature-branches och pull requests utan att publicera eller deploya imagen.
 
 ## Deployment
 
@@ -131,15 +136,28 @@ En push till `main` eller en manuell `workflow_dispatch` startar pipelinen:
 1. Koden checkas ut.
 2. Metadata för `latest` och aktuell commit-SHA skapas.
 3. Containerimagen byggs, publiceras i GHCR och identifieras med digest.
-4. Imagen signeras nyckellöst med Cosign och GitHub OIDC.
-5. En kortlivad Headscale-nyckel skapas.
-6. GitHub-runnern ansluter med taggen `tag:github-runner`.
-7. Subnet-route och TCP 6443 till K3s verifieras.
-8. Kubernetes-manifesten, inklusive Ingress, appliceras.
-9. Rollout till den signerade imagen verifieras.
+4. En CycloneDX-SBOM skapas och attesteras mot samma image-digest.
+5. Imagen signeras nyckellöst med Cosign och GitHub OIDC.
+6. En kortlivad Headscale-nyckel skapas.
+7. GitHub-runnern ansluter med taggen `tag:github-runner`.
+8. Subnet-route och TCP 6443 till K3s verifieras.
+9. Kubernetes-manifesten, inklusive Ingress, appliceras.
+10. Rollout till den signerade imagen verifieras.
 
 Workflowet använder GitHub Secrets och Variables. Hemliga värden får aldrig
 skrivas i dokumentation, Issues, loggar eller commits.
+
+Applikationens sessionsnyckel ligger i Kubernetes-secreten
+`company-website-secrets`. Den skapas en gång av en behörig administratör före
+första deploymenten:
+
+```bash
+kubectl create secret generic company-website-secrets \
+  --from-literal=secret-key="$(openssl rand -hex 32)"
+```
+
+Kommandot behöver inte köras igen vid varje deployment. GitHub-runnerns begränsade
+RBAC får medvetet inte läsa eller ändra Secrets.
 
 ## Projektstruktur
 
