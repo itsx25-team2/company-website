@@ -1,7 +1,7 @@
 # Dokumentation
 
 Denna mapp samlar Team 2:s gemensamma dokumentation för applikationen och
-Workshop 3.
+Workshop 3 och Workshop 4.
 
 ## Innehåll
 
@@ -13,6 +13,8 @@ Workshop 3.
   sammanfattning av dagens gemensamma arbete.
 - [team_work_summary_2026-09-24.md](team_work_summary_2026-09-24.md):
   Ingress, image-spårbarhet, Cosign och verifierad aktuell status.
+- [team_work_summary_2026-09-28.md](team_work_summary_2026-09-28.md):
+  Workshop 4, SBOM, säkerhetshärdning och branchverifiering.
 
 ## Rutin
 

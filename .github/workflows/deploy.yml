@@ -15,7 +15,19 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Run tests
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+          python -m pytest -q
 
       # --- Build & push to GHCR ---
       - name: Log in to GitHub Container Registry
@@ -43,10 +55,24 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
+      - name: Generate CycloneDX SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: ghcr.io/${{ github.repository }}@${{ steps.build.outputs.digest }}
+          format: cyclonedx-json
+          output-file: sbom.cdx.json
+
       - name: Install Cosign
         uses: sigstore/cosign-installer@v4.1.0
         with:
           cosign-release: v2.6.4
+
+      - name: Attest SBOM with Cosign
+        run: |
+          cosign attest --yes \
+            --predicate sbom.cdx.json \
+            --type cyclonedx \
+            "ghcr.io/${{ github.repository }}@${{ steps.build.outputs.digest }}"
 
       - name: Sign image with Cosign
         run: cosign sign --yes "ghcr.io/${{ github.repository }}@${{ steps.build.outputs.digest }}"

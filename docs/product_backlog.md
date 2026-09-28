@@ -1,6 +1,6 @@
 # Produktbacklog - Company Website
 
-Senast uppdaterad: 2026-09-24
+Senast uppdaterad: 2026-09-28
 
 | ID | Prioritet | Status | Uppgift | Klart när |
 | --- | --- | --- | --- | --- |
@@ -10,11 +10,11 @@ Senast uppdaterad: 2026-09-24
 | APP-04 | Hög | Done | Gör GHCR-imagen tillgänglig för K3s | Paketet är publikt och imagen kan hämtas utan registry-credential |
 | APP-05 | Hög | To do | Analysera placeholder-flaggor i den egna kursmiljön | Observationer är verifierade och dokumenterade utan att exponera flaggvärden |
 | APP-06 | Hög | To do | Genomför defensiv analys av den skarpa kursmiljön | Endast godkända kursmål analyseras och resultatet dokumenteras |
-| APP-07 | Medel | To do | Dokumentera fynd, risk och rekommenderad åtgärd | Varje fynd har bevis, konsekvens, osäkerhet och defensivt åtgärdsförslag |
+| APP-07 | Medel | In progress | Dokumentera fynd, risk och rekommenderad åtgärd | Varje fynd har bevis, konsekvens, osäkerhet och defensivt åtgärdsförslag |
 | APP-08 | Medel | Done | Gör image-deployment reproducerbar med unik image-tagg | Varje commit deployar en identifierbar image och rollback är dokumenterad och verifierad |
 | APP-09 | Medel | Done | Ersätt `hostPort` med Kubernetes Ingress | En ny signerad version har rullats ut utan portkonflikt och ger HTTP `200` via Ingress |
 | APP-10 | Medel | In progress | Gör Headscale-policyinstallationen reproducerbar | Policyfilen installeras med `root:headscale`, läge `640`, valideras och laddas om |
-| APP-11 | Låg | To do | Följ upp varningar från GitHub Actions | Node-runtime och authkey-varning är bedömda och dokumenterade |
+| APP-11 | Låg | In progress | Följ upp varningar från GitHub Actions | Node-runtime och authkey-varning är bedömda och dokumenterade |
 | APP-12 | Låg | To do | Dokumentera rutin för rotation av Headscale API-nyckel | Ägare, giltighetstid, rotation och återkallning framgår utan hemliga värden |
 | APP-13 | Hög | Done | Signera och verifiera container-images | Pipelinen signerar med GitHub OIDC, policyn nekar osignerad image och godkänner Team 2:s signerade digest |
 
@@ -39,6 +39,16 @@ Backlogfilen synkroniseras inte automatiskt med GitHub Issues.
 
 - APP-08: [Issue #3](https://github.com/itsx25-team2/company-website/issues/3) är tekniskt slutförd genom verifierad rollback och återställning 2026-09-24.
 - APP-09: [Issue #9](https://github.com/itsx25-team2/company-website/issues/9) är slutförd genom PR #16 och verifierad med HTTP `200` via Ingress.
+
+## Verifiering 2026-09-28
+
+- Workshop 4 är integrerad på `workshop4/instructor-sync` utan konflikt mot aktuell `main`.
+- 19 tester, Docker-build, Bandit, `pip-audit`, YAML och Compose är verifierade.
+- CycloneDX 1.5 genererades lokalt från imagen med 139 komponenter.
+- `Application Checks`-körning 36404525054 lyckades.
+- Flasks Kubernetes Secret är provisionerad utan att värdet lagrats i Git.
+- APP-07 och APP-11 förblir `In progress` tills PR, deployment och
+  slutlig SBOM/Cosign-verifiering är klara.
 
 ## Verifiering 2026-09-24
 

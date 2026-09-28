@@ -9,10 +9,16 @@ och defensiva analyser i projektet.
 | --- | --- |
 | [Arbetssammanfattning 2026-09-21](work_summary_2026-09-21.md) | Individuellt arbete med applikationsrepot, K3s-driftsättning och säker dokumentation. |
 | [Arbetssammanfattning 2026-09-24](work_summary_2026-09-24.md) | Individuellt arbete med MagicDNS, Ingress, image-spårbarhet, Cosign-policy och verifierad rollback. |
+| [Arbetssammanfattning 2026-09-28](work_summary_2026-09-28.md) | Individuellt arbete med Workshop 4, SBOM, säkerhetshärdning och verifiering. |
+| [Teamsammanfattning 2026-09-28](../../docs/team_work_summary_2026-09-28.md) | Gruppens Workshop 4-arbete, närvaro, tester och nästa steg. |
 | [Teamsammanfattning 2026-09-24](../../docs/team_work_summary_2026-09-24.md) | Dagens verifierade arbete med MagicDNS, Ingress, image-spårbarhet och Cosign. |
 
-## Aktuell status 2026-09-24
+## Aktuell status 2026-09-28
 
+- Workshop 4 är integrerad och säkerhetshärdad på `workshop4/instructor-sync`.
+- Branchkontrollen med 19 tester och Docker-build är grön.
+- Kubernetes-secreten för Flasks sessionsnyckel finns på `team2-primary`.
+- Ändringarna väntar på PR, två godkännanden och verifierad deployment.
 - `company-website.team2.arpa` svarar med HTTP `200` via Headscale MagicDNS
   och Kubernetes Ingress.
 - Ingress-, pipeline- och Cosign-ändringarna är mergade via PR #16 och den

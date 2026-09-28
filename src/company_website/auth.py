@@ -1,15 +1,24 @@
-import sqlite3
-
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash
 
-from .db import get_db
+from .db import get_db, get_legacy_db
 from .models import User
 
 auth_bp = Blueprint('auth', __name__)
 
 login_manager = LoginManager()
+
+
+def _get_legacy_user(username, password):
+    conn = get_legacy_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM legacy_users WHERE username = ?", (username,))
+    row = cursor.fetchone()
+    conn.close()
+    if row and check_password_hash(row['password_hash'], password):
+        return row
+    return None
 
 
 @login_manager.user_loader
@@ -19,7 +28,7 @@ def load_user(user_id):
     cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
     row = cursor.fetchone()
     conn.close()
-    if row:
+    if row and row['enabled']:
         return User(
             str(row['id']),
             row['username'],
@@ -29,38 +38,42 @@ def load_user(user_id):
             row['email'],
             row['about'],
             row['role'],
-            row['internal_notes']
+            row['internal_notes'],
+            row['email_signature'],
         )
     return None
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    if current_user.is_authenticated:
+    if request.method == 'GET' and current_user.is_authenticated:
         return redirect(url_for('main.index'))
     if request.method == 'POST':
         username = request.form.get('username', '')
         password = request.form.get('password', '')
 
-        conn = get_db()
-        cursor = conn.cursor()
-        query = f"SELECT * FROM users WHERE username = '{username}' AND password_hash = '{password}'"
-        try:
-            cursor.execute(query)
-        except sqlite3.Error as e:
-            conn.close()
-            return f"SQL Error: {e}", 500
-        row = cursor.fetchone()
+        legacy_row = _get_legacy_user(username, password)
 
-        if not row:
+        row = None
+        if legacy_row:
+            conn = get_db()
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM users WHERE username = ?", (legacy_row['username'],))
+            row = cursor.fetchone()
+            conn.close()
+        else:
+            conn = get_db()
+            cursor = conn.cursor()
             cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
             row = cursor.fetchone()
+            conn.close()
             if row and row['username'] != 'flag' and check_password_hash(row['password_hash'], password):
                 pass
             else:
                 row = None
 
-        conn.close()
+        if row and not row['enabled']:
+            row = None
 
         if row:
             user = User(
@@ -72,7 +85,8 @@ def login():
                 row['email'],
                 row['about'],
                 row['role'],
-                row['internal_notes']
+                row['internal_notes'],
+                row['email_signature'],
             )
             login_user(user)
             flash('Login successful!', 'success')
@@ -81,7 +95,7 @@ def login():
     return render_template('login.html')
 
 
-@auth_bp.route('/logout')
+@auth_bp.route('/logout', methods=['POST'])
 @login_required
 def logout():
     logout_user()
