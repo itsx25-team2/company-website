@@ -18,7 +18,8 @@ och defensiva analyser i projektet.
 - Workshop 4 är integrerad och säkerhetshärdad på `workshop4/instructor-sync`.
 - Branchkontrollen med 19 tester och Docker-build är grön.
 - Kubernetes-secreten för Flasks sessionsnyckel finns på `team2-primary`.
-- Ändringarna väntar på PR, två godkännanden och verifierad deployment.
+- PR #21 är mergad och deploymentkörning `36435042346`, försök 2, är
+  verifierad med frisk tjänst, signerad image och CycloneDX-attestering.
 - `company-website.team2.arpa` svarar med HTTP `200` via Headscale MagicDNS
   och Kubernetes Ingress.
 - Ingress-, pipeline- och Cosign-ändringarna är mergade via PR #16 och den

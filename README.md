@@ -1,15 +1,18 @@
 # Company Website - ITSX25 Team 2
 
 Detta repository innehåller Team 2:s applikation och CI/CD-flöde för Kurs 6,
-Workshop 3 och Workshop 4 Blue Team. Applikationen är byggd med Flask, paketeras som en
-container i GitHub Container Registry (GHCR) och driftsätts automatiskt till
-teamets K3s-kluster.
+Workshop 3 och Workshop 4 Blue Team. Applikationen är byggd med Flask,
+paketeras som en container i GitHub Container Registry (GHCR) och driftsätts
+automatiskt till teamets K3s-kluster.
 
 ## Aktuell status
 
-- Workshop 4 med CycloneDX-SBOM, attestering och säkerhetshärdning är
-  verifierad på `workshop4/instructor-sync` och väntar på PR.
-- Branchens `Application Checks` är grön med 19 tester och Docker-build.
+- Workshop 4 mergades genom PR #21 och är driftsatt från mergecommit
+  `3eeb631`.
+- Deploymentkörning `36435042346`, försök 2, är grön med 19 tester,
+  CycloneDX-SBOM, Cosign-attestering, signering och verifierad K3s-rollout.
+- Den deployade imagen är låst till digest `sha256:469d57e...` och podden är
+  `1/1 Ready`.
 - Kubernetes-secreten `company-website-secrets` är provisionerad på
   `team2-primary` utan att värdet har lagts i Git.
 - GitHub-repot och GHCR-paketet är publika.
@@ -27,13 +30,13 @@ teamets K3s-kluster.
   nekades medan Team 2:s signerade digest godkändes.
 - Rollback till en tidigare signerad digest och återställning till den senaste
   versionen är verifierade med redo pod och HTTP-status `200`.
-- Senaste mergade `main` (`f1bc921`) har en grön K3s-deploy. Efterkontrollen
-  gav `5 passed`, frisk databasanslutning och HTTP `200` via intern DNS.
+- Efterkontrollen gav frisk databasanslutning, HTTP `200` via intern DNS samt
+  externt verifierad Cosign-signatur och CycloneDX-attestering.
 
-Den tekniska setupen för Workshop 3 är klar. Defensiv analys av applikationen
-har påbörjats och observationer dokumenteras utan credentials eller
-flaggvärden. Åtgärdsförslag hanteras via Issues, backlog, branch och pull
-request.
+Den tekniska setupen för Workshop 3 och Workshop 4 är verifierad. Defensiv
+analys av applikationen fortsätter och observationer dokumenteras utan
+credentials eller flaggvärden. Åtgärdsförslag hanteras via Issues, backlog,
+branch och pull request.
 
 ## Viktiga filer
 
@@ -51,6 +54,8 @@ request.
 - [scripts/generate-kubeconfig.sh](scripts/generate-kubeconfig.sh): genererar
   en begränsad kubeconfig för CI/CD.
 - [docs/](docs/): backlog, status, guider och gemensamma sammanfattningar.
+- [docs/headscale_api_key_rotation.md](docs/headscale_api_key_rotation.md):
+  säker rutin för Headscale API-nyckelns livscykel.
 - [members/](members/): personliga anteckningar och arbetssammanfattningar.
 
 ## Dokumentation
@@ -144,7 +149,8 @@ En push till `main` eller en manuell `workflow_dispatch` startar pipelinen:
 3. Containerimagen byggs, publiceras i GHCR och identifieras med digest.
 4. En CycloneDX-SBOM skapas och attesteras mot samma image-digest.
 5. Imagen signeras nyckellöst med Cosign och GitHub OIDC.
-6. En kortlivad Headscale-nyckel skapas.
+6. En tidsbegränsad Headscale API-nyckel i GitHub Secrets godkänner att en
+   kortlivad engångsnyckel skapas automatiskt.
 7. GitHub-runnern ansluter med taggen `tag:github-runner`.
 8. Subnet-route och TCP 6443 till K3s verifieras.
 9. Kubernetes-manifesten, inklusive Ingress, appliceras.
@@ -152,6 +158,10 @@ En push till `main` eller en manuell `workflow_dispatch` startar pipelinen:
 
 Workflowet använder GitHub Secrets och Variables. Hemliga värden får aldrig
 skrivas i dokumentation, Issues, loggar eller commits.
+
+Headscale API-nyckeln roteras enligt
+[rotationsguiden](docs/headscale_api_key_rotation.md). Den är skild från GCP:
+WIF används fortsatt utan en långlivad GCP Service Account Key.
 
 Applikationens sessionsnyckel ligger i Kubernetes-secreten
 `company-website-secrets`. Den skapas en gång av en behörig administratör före
