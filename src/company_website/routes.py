@@ -1,6 +1,6 @@
 import re
 
-from flask import Blueprint, jsonify, render_template, render_template_string, redirect, url_for, request, flash
+from flask import Blueprint, jsonify, render_template, redirect, url_for, request, flash
 from flask_login import login_required, current_user
 from .db import get_db
 from .models import User
@@ -8,28 +8,29 @@ from .models import User
 main_bp = Blueprint('main', __name__)
 COMPANY_NAME = 'Placeholder Industries'
 EMAIL_PREVIEW_MAX_LENGTH = 200
-EMAIL_EXPRESSION_PATTERN = re.compile(r"{{(.*?)}}", re.DOTALL)
-EMAIL_BLOCKED_TOKEN_PATTERN = re.compile(
-    r"\[|\]|\(|\)|''|\"\"|\bdict\b|\brequest\b", re.IGNORECASE
+EMAIL_VARIABLE_PATTERN = re.compile(
+    r"{{\s*(firstname|lastname|email|role|company)\s*}}"
 )
+EMAIL_TEMPLATE_MARKERS = ("{{", "}}", "{%", "%}", "{#", "#}")
 
 
-def _contains_blocked_email_syntax(template):
-    return any(
-        EMAIL_BLOCKED_TOKEN_PATTERN.search(match.group(1))
-        for match in EMAIL_EXPRESSION_PATTERN.finditer(template)
-    )
+def _contains_unsupported_email_syntax(template):
+    remaining_text = EMAIL_VARIABLE_PATTERN.sub("", template)
+    return any(marker in remaining_text for marker in EMAIL_TEMPLATE_MARKERS)
 
 
 def _render_email_preview(template, user):
-    return render_template_string(
-        template,
-        firstname=user.first_name or '',
-        lastname=user.last_name or '',
-        email=user.email or '',
-        role=user.role or '',
-        company=COMPANY_NAME,
-    )
+    if _contains_unsupported_email_syntax(template):
+        raise ValueError("Unsupported email signature syntax")
+
+    values = {
+        "firstname": user.first_name or "",
+        "lastname": user.last_name or "",
+        "email": user.email or "",
+        "role": user.role or "",
+        "company": COMPANY_NAME,
+    }
+    return EMAIL_VARIABLE_PATTERN.sub(lambda match: values[match.group(1)], template)
 
 
 @main_bp.route('/')
@@ -91,7 +92,7 @@ def email_preview(id):
     email_template = request.form.get('email_template', '')
     if len(email_template) > EMAIL_PREVIEW_MAX_LENGTH:
         return "Email template is too long", 400
-    if _contains_blocked_email_syntax(email_template):
+    if _contains_unsupported_email_syntax(email_template):
         return jsonify(error='The signature template contains unsupported syntax.'), 400
 
     return jsonify(preview=_render_email_preview(email_template, user))

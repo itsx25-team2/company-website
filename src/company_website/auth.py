@@ -1,5 +1,3 @@
-import sqlite3
-
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash
@@ -10,6 +8,18 @@ from .models import User
 auth_bp = Blueprint('auth', __name__)
 
 login_manager = LoginManager()
+
+
+def _get_legacy_user(username, password):
+    conn = get_legacy_db()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT * FROM legacy_users WHERE username = ? AND password_hash = ?",
+        (username, password),
+    )
+    row = cursor.fetchone()
+    conn.close()
+    return row
 
 
 @login_manager.user_loader
@@ -43,16 +53,7 @@ def login():
         username = request.form.get('username', '')
         password = request.form.get('password', '')
 
-        conn = get_legacy_db()
-        cursor = conn.cursor()
-        query = f"SELECT * FROM legacy_users WHERE username = '{username}' AND password_hash = '{password}'"
-        legacy_row = None
-        try:
-            cursor.execute(query)
-            legacy_row = cursor.fetchone()
-        except sqlite3.Error:
-            flash('Invalid username or password.', 'error')
-        conn.close()
+        legacy_row = _get_legacy_user(username, password)
 
         row = None
         if legacy_row:
