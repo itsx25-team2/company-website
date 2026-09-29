@@ -65,12 +65,38 @@ som hör till just den imagen.
 - Docker Scout hade två kvarvarande basimagefynd utan fixversion.
 - GitHub `Application Checks` lyckades på 18 sekunder.
 
+## Merge, felsökning och deployment
+
+PR #21 godkändes och mergades som `3eeb631`. Den första deploymenten nådde
+hela vägen genom test, image-build, SBOM, attestering och signering men
+stoppades när en Headscale-engångsnyckel skulle skapas.
+
+Jag spårade felet till att den lagrade Headscale API-nyckeln hade löpt ut.
+Detta är inte en GCP Service Account Key: WIF och Cosign fortsätter att vara
+nyckellösa via GitHub OIDC. Headscale API-nyckeln är i stället den
+tidsbegränsade kontrollcredential som får skapa en automatisk engångsnyckel
+för runnerns nätanslutning.
+
+API-nyckeln roterades med 30 dagars giltighet och överfördes direkt till
+GitHub Secrets utan att värdet visades eller sparades. Omkörning 2 av
+deployment `36435042346` blev helt grön.
+
+Efteråt verifierade jag:
+
+- `1/1` redo Kubernetes-repliker och slutförd rollout,
+- digestlåst image `sha256:469d57e...`,
+- HTTP `200` och frisk databas via `/healthz`,
+- säkra cookieflaggor,
+- giltig Cosign-signatur från rätt workflow och commit,
+- giltig CycloneDX-attestering för samma image-digest.
+
 ## Spårbarhet
 
 - Branch: `workshop4/instructor-sync`
 - Säkerhetshärdning: `47eb0bb`
 - Action-uppdatering: `d237f53`
 - [Godkänd branchkontroll](https://github.com/itsx25-team2/company-website/actions/runs/36404525054)
+- [Godkänd deployment](https://github.com/itsx25-team2/company-website/actions/runs/36435042346)
 - [Gemensam sammanfattning](../../docs/team_work_summary_2026-09-28.md)
 
 ## AI-användning
@@ -82,7 +108,7 @@ och GitHub Actions. Inget mergades automatiskt till `main`.
 
 ## Kvar att göra
 
-- skapa PR och invänta minst två godkännanden,
-- verifiera deployment från `main`,
-- verifiera publicerad SBOM-attestering och Cosign-signatur,
+- få rotationsguiden granskad och mergad,
+- följa upp Tailscale Actions authkey-varning och Ubuntu 26-migrering,
+- rotera Headscale API-nyckeln innan nästa utgångsdatum,
 - följa upp basimagefynd när fixversioner finns.

@@ -7,6 +7,8 @@ Workshop 3 och Workshop 4.
 
 - [product_backlog.md](product_backlog.md): gemensam status för risker,
   förbättringsarbete och kursmoment.
+- [headscale_api_key_rotation.md](headscale_api_key_rotation.md): ägarskap,
+  giltighetstid, säker rotation, verifiering och återkallning.
 - [workshop3_setup_status.md](workshop3_setup_status.md): teknisk setup,
   verifieringar och kvarvarande uppföljning.
 - [team_work_summary_2026-09-21.md](team_work_summary_2026-09-21.md):
@@ -14,7 +16,7 @@ Workshop 3 och Workshop 4.
 - [team_work_summary_2026-09-24.md](team_work_summary_2026-09-24.md):
   Ingress, image-spårbarhet, Cosign och verifierad aktuell status.
 - [team_work_summary_2026-09-28.md](team_work_summary_2026-09-28.md):
-  Workshop 4, SBOM, säkerhetshärdning och branchverifiering.
+  Workshop 4, SBOM, säkerhetshärdning, deployment och slutverifiering.
 
 ## Rutin
 

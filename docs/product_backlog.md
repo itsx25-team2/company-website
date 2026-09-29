@@ -15,7 +15,7 @@ Senast uppdaterad: 2026-09-28
 | APP-09 | Medel | Done | Ersätt `hostPort` med Kubernetes Ingress | En ny signerad version har rullats ut utan portkonflikt och ger HTTP `200` via Ingress |
 | APP-10 | Medel | In progress | Gör Headscale-policyinstallationen reproducerbar | Policyfilen installeras med `root:headscale`, läge `640`, valideras och laddas om |
 | APP-11 | Låg | In progress | Följ upp varningar från GitHub Actions | Node-runtime och authkey-varning är bedömda och dokumenterade |
-| APP-12 | Låg | To do | Dokumentera rutin för rotation av Headscale API-nyckel | Ägare, giltighetstid, rotation och återkallning framgår utan hemliga värden |
+| APP-12 | Låg | In progress | Dokumentera rutin för rotation av Headscale API-nyckel | Ägare, giltighetstid, rotation och återkallning framgår utan hemliga värden |
 | APP-13 | Hög | Done | Signera och verifiera container-images | Pipelinen signerar med GitHub OIDC, policyn nekar osignerad image och godkänner Team 2:s signerade digest |
 
 ## Statusförklaring
@@ -47,8 +47,18 @@ Backlogfilen synkroniseras inte automatiskt med GitHub Issues.
 - CycloneDX 1.5 genererades lokalt från imagen med 139 komponenter.
 - `Application Checks`-körning 36404525054 lyckades.
 - Flasks Kubernetes Secret är provisionerad utan att värdet lagrats i Git.
-- APP-07 och APP-11 förblir `In progress` tills PR, deployment och
-  slutlig SBOM/Cosign-verifiering är klara.
+- PR #21 mergades som `3eeb631` efter två godkännanden.
+- Första deploymentförsöket stoppades av en utgången Headscale API-nyckel.
+- API-nyckeln roterades med 30 dagars giltighet och lagrades direkt som
+  GitHub Secret utan att värdet visades eller sparades i Git.
+- Deploymentkörning `36435042346`, försök 2, lyckades i samtliga steg.
+- Kubernetes kör digest `sha256:469d57e...` med `1/1` redo repliker.
+- `/healthz` gav `healthy`, databasen var ansluten och HTTP gav status `200`.
+- Cosign-signaturen och CycloneDX-attesteringen verifierades externt mot
+  Team 2:s `deploy.yml`, `main` och commit `3eeb631`.
+- APP-11 förblir `In progress` för uppföljning av authkey-varningen och
+  kommande Ubuntu 26-migrering.
+- APP-12 är `In progress` tills rotationsguiden har granskats och mergats.
 
 ## Verifiering 2026-09-24
 
