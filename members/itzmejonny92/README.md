@@ -10,16 +10,22 @@ och defensiva analyser i projektet.
 | [Arbetssammanfattning 2026-09-21](work_summary_2026-09-21.md) | Individuellt arbete med applikationsrepot, K3s-driftsättning och säker dokumentation. |
 | [Arbetssammanfattning 2026-09-24](work_summary_2026-09-24.md) | Individuellt arbete med MagicDNS, Ingress, image-spårbarhet, Cosign-policy och verifierad rollback. |
 | [Arbetssammanfattning 2026-09-28](work_summary_2026-09-28.md) | Individuellt arbete med Workshop 4, SBOM, säkerhetshärdning och verifiering. |
+| [Arbetssammanfattning 2026-09-29](work_summary_2026-09-29.md) | Efterkontroll av Workshop 3.5-4 och Workshop 4 samt lokal och driftsatt funktionsverifiering. |
+| [Teamsammanfattning 2026-09-29](../../docs/team_work_summary_2026-09-29.md) | Gruppens efterkontroll, närvaro och verifierade live-status. |
 | [Teamsammanfattning 2026-09-28](../../docs/team_work_summary_2026-09-28.md) | Gruppens Workshop 4-arbete, närvaro, tester och nästa steg. |
 | [Teamsammanfattning 2026-09-24](../../docs/team_work_summary_2026-09-24.md) | Dagens verifierade arbete med MagicDNS, Ingress, image-spårbarhet och Cosign. |
 
-## Aktuell status 2026-09-28
+## Aktuell status 2026-09-29
 
-- Workshop 4 är integrerad och säkerhetshärdad på `workshop4/instructor-sync`.
+- Workshop 4 är integrerad, säkerhetshärdad och mergad till `main`.
 - Branchkontrollen med 19 tester och Docker-build är grön.
 - Kubernetes-secreten för Flasks sessionsnyckel finns på `team2-primary`.
 - PR #21 är mergad och deploymentkörning `36435042346`, försök 2, är
   verifierad med frisk tjänst, signerad image och CycloneDX-attestering.
+- Dokumentations-PR #22 är mergad som `64bb55f` och efterföljande deployment
+  `36565389383` lyckades.
+- E-postsignaturens tillåtna och otillåtna platshållare är verifierade både i
+  en isolerad lokal miljö och manuellt i live-miljön utan sparade ändringar.
 - `company-website.team2.arpa` svarar med HTTP `200` via Headscale MagicDNS
   och Kubernetes Ingress.
 - Ingress-, pipeline- och Cosign-ändringarna är mergade via PR #16 och den

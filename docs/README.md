@@ -17,6 +17,8 @@ Workshop 3 och Workshop 4.
   Ingress, image-spårbarhet, Cosign och verifierad aktuell status.
 - [team_work_summary_2026-09-28.md](team_work_summary_2026-09-28.md):
   Workshop 4, SBOM, säkerhetshärdning, deployment och slutverifiering.
+- [team_work_summary_2026-09-29.md](team_work_summary_2026-09-29.md):
+  efterkontroll av workshopparna, live-verifiering och aktuell status.
 
 ## Rutin
 
