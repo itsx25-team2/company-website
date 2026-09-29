@@ -27,6 +27,11 @@ applikationens e-postsignatur utan att ändra data i live-miljön.
 - PR #22 mergades som `64bb55f`.
 - Deployment `36565389383` efter merge slutfördes med resultatet `success`.
 - Den deployade imagen är låst till digest `sha256:bf1b2a60...`.
+- Parallellt mergades Lars Torngrens
+  [infra-PR #77](https://github.com/itsx25-team2/kurs6-team2-infra/pull/77). Han
+  dokumenterade hur han hittade de två nya flaggorna i den uppdaterade
+  kursapplikationen.
+  Sammanfattningen återger varken flaggvärden eller angreppskommandon.
 
 ## Observationer
 
