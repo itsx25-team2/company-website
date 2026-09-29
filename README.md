@@ -7,11 +7,11 @@ automatiskt till teamets K3s-kluster.
 
 ## Aktuell status
 
-- Workshop 4 mergades genom PR #21 och är driftsatt från mergecommit
-  `3eeb631`.
+- Workshop 4 mergades genom PR #21 och dokumentationens efterkontroll genom
+  PR #22. Senaste mergecommit är `64bb55f`.
 - Deploymentkörning `36435042346`, försök 2, är grön med 19 tester,
   CycloneDX-SBOM, Cosign-attestering, signering och verifierad K3s-rollout.
-- Den deployade imagen är låst till digest `sha256:469d57e...` och podden är
+- Den deployade imagen är låst till digest `sha256:bf1b2a60...` och podden är
   `1/1 Ready`.
 - Kubernetes-secreten `company-website-secrets` är provisionerad på
   `team2-primary` utan att värdet har lagts i Git.
@@ -32,6 +32,10 @@ automatiskt till teamets K3s-kluster.
   versionen är verifierade med redo pod och HTTP-status `200`.
 - Efterkontrollen gav frisk databasanslutning, HTTP `200` via intern DNS samt
   externt verifierad Cosign-signatur och CycloneDX-attestering.
+- Deployment `36565389383` efter PR #22 lyckades. Den deployade imagen
+  är låst till digest `sha256:bf1b2a60...`. E-postsignaturens tillåtna
+  och otillåtna platshållare verifierades dessutom manuellt i live-miljön
+  utan att några profiländringar sparades.
 
 Den tekniska setupen för Workshop 3 och Workshop 4 är verifierad. Defensiv
 analys av applikationen fortsätter och observationer dokumenteras utan
@@ -66,6 +70,7 @@ branch och pull request.
 - [Teamsammanfattning 2026-09-21](docs/team_work_summary_2026-09-21.md)
 - [Teamsammanfattning 2026-09-24](docs/team_work_summary_2026-09-24.md)
 - [Teamsammanfattning 2026-09-28](docs/team_work_summary_2026-09-28.md)
+- [Teamsammanfattning 2026-09-29](docs/team_work_summary_2026-09-29.md)
 
 ## Relaterad infrastruktur
 
