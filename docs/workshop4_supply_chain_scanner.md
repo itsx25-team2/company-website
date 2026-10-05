@@ -43,7 +43,7 @@ RBAC behövs för att skannern ska kunna läsa det den ska analysera, men
 behörigheterna bör granskas mot principen om minsta privilegium. Webhooken ska
 fortsätta lagras som en hemlighet utanför Git.
 
-## Rekommenderad fortsattning
+## Rekommenderad fortsättning
 
 1. Dokumentera ägare, körschema, vad som skannas och vilka larm som ska följas
    upp.
@@ -57,4 +57,3 @@ fortsätta lagras som en hemlighet utanför Git.
 
 Den här filen innehåller inga webhookvärden, tokens, Kubernetes-hemligheter,
 interna IP-adresser eller råa skannerrapporter.
-

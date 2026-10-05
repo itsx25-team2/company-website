@@ -54,7 +54,7 @@ aktuell kod** - inte som en aktiv incident.
 | IDOR/bristande ägarkontroll vid profilåtkomst | Historisk rapport; `routes.py` kontrollerar nu användare mot profil för ändring och e-postförhandsvisning | Ingen entydig ATT&CK-teknik; applikationsauktorisationsbrist | **Historiskt fynd, åtgärdat i aktuell kod.** Behåll negativa tester för andra användares resurser och logga upprepade nekade försök. | Hög | CLEAR |
 | Hårdkodad `SECRET_KEY`, seed-data och risk för hemligheter i kod/historik | Historisk rapport samt kurslabb om Git-historik och remote-branches | [T1552.001 Credentials In Files](https://attack.mitre.org/techniques/T1552/001/) | **Åtgärdat i nuvarande konfiguration, men förebyggande kontroll behövs fortsatt.** Använd GitHub/Kubernetes-secrets, secret scanning och rotation om ett värde har exponerats. | Medel till hög | CLEAR; verkliga hemligheter är RED |
 | CSRF- och cookiehardening | Historisk rapport; Workshop 4 beskriver CSRF-skydd samt säkrare sessions- och cookie-inställningar | Ingen direkt ATT&CK-teknik; skydd mot webbförsök snarare än en teknik | **Åtgärdat i aktuell Workshop 4-version.** Verifiera skyddet i regressionssviten och vid framtida formulär. | Hög | CLEAR |
-| Jinja-injektion i e-postsignaturens förhandsvisning | Säkerhetsrapportens tillägg och aktuell `routes.py`: endast fem tillåtna variabler ersätts utan dynamisk Jinja-rendering | [T1059.004 Unix Shell](https://attack.mitre.org/techniques/T1059/004/) är endast en möjlig följd om template-injektion leder till kommandokörning; sådant är inte visat här | **Historiskt fynd, åtgärdat i aktuell kod.** Behåll allowlist, längdgräns och tester som avvisar övrig mallsyntax. De äldre rapporternas status och brutna kodlänkar bör rättas i separat review. | Hög för åtgärdsstatus; medel för hypotetisk ATT&CK-följd | CLEAR |
+| Jinja-injektion i e-postsignaturens förhandsvisning | Säkerhetsrapportens tillägg och aktuell `routes.py`: endast fem tillåtna variabler ersätts utan dynamisk Jinja-rendering | [T1059.004 Unix Shell](https://attack.mitre.org/techniques/T1059/004/) är endast en möjlig följd om template-injektion leder till kommandokörning; sådant är inte visat här | **Historiskt fynd, åtgärdat i aktuell kod.** Behåll en allowlist, längdgräns och tester som avvisar övrig mallsyntax. De äldre rapporternas status och brutna kodlänkar bör rättas i en separat review. | Hög för åtgärdsstatus; medel för hypotetisk ATT&CK-följd | CLEAR |
 | Signerade images, SBOM och policykontroll minskar supply-chain-risk | Workshop 4-verifiering: Cosign-signatur och CycloneDX-attestering är kontrollerade; policyn nekar osignerad image | [T1195.002 Compromise Software Supply Chain](https://attack.mitre.org/techniques/T1195/002/) | **Åtgärdad och verifierad.** Fortsätt kontrollera image-digest, attestering och policy vid varje rollout. | Hög | CLEAR |
 | Trivy CronJob och Discord-rapportering i Kubernetes | Fajks Discord-uppdatering och infra-repots arbetssammanfattning 2026-10-01 bekräftar Secret, RBAC, CronJob och testat larmflöde. PR #25 innehåller dock endast dokumentation, inte Kubernetes-manifest. | [T1195.002 Compromise Software Supply Chain](https://attack.mitre.org/techniques/T1195/002/) | **Driftverifierad men ej reproducerbar från Git.** Dokumentera ägare, schema, image/digest-policy, alertkriterier och återställning utan webhook eller andra hemligheter. Detta är en dokumentations- och driftlucka, inte bevis för att kontrollen saknas. | Medel | CLEAR; manifest och webhookdetaljer är AMBER+STRICT |
 | Kurslabb: Git-historik, branches, IDOR och SQL injection | Individuella och gemensamma flaggsammanfattningar | [T1552.001 Credentials In Files](https://attack.mitre.org/techniques/T1552/001/) samt [T1190 Exploit Public-Facing Application](https://attack.mitre.org/techniques/T1190/) | **Labbfynd, inte Team 2-incident.** Lärande: skanna all Git-historik och referenser, kontrollera objektägarskap server-side och använd parametriserad SQL. | Hög för labbet | CLEAR; flaggvärden och accessdata är RED |
@@ -86,9 +86,9 @@ gemensamt språk för beteenden och försvar, inte som bevis för ett intrång.
 
 | Källtyp | Bidrag | Bedömning |
 | --- | --- | --- |
-| Aktuell applikationskod och tester | Visar skydd som finns i mergad version | Primarkalla med hog tilltro |
-| Pull requests, Actions och driftkontroller | Visar att andringar byggts, deployats och testats | Hog tilltro nar kod, CI och livekontroll stammer |
-| Aldre sakerhetsrapporter | Beskriver ursprungliga fynd och prioritering | Medel till hog tilltro; status maste jamforas med aktuell kod |
+| Aktuell applikationskod och tester | Visar skydd som finns i mergad version | Primärkälla med hög tilltro |
+| Pull requests, Actions och driftkontroller | Visar att ändringar byggts, deployats och testats | Hög tilltro när kod, CI och livekontroll stämmer |
+| Äldre säkerhetsrapporter | Beskriver ursprungliga fynd och prioritering | Medel till hög tilltro; status måste jämföras med aktuell kod |
 | Kurslabb | Ger kontrollerade exempel på upptäckt, angreppsyta och åtgärdsbehov | Hög tilltro för labbresultat, inte för verklig attribution |
 | MITRE ATT&CK och TLP | Gemensamt språk för teknik respektive delning | Ramverk, inte incidentbevis |
 
@@ -104,19 +104,19 @@ Rapporten är därför märkt **TLP:CLEAR**. Det innebär inte att all
 säkerhetsinformation kan delas öppet: råa skannerrapporter, runtime-detaljer och
 autentiseringsuppgifter hanteras enligt de striktare nivåerna i tabellen nedan.
 
-| Niva | Anvandning i Team 2 |
+| Nivå | Användning i Team 2 |
 | --- | --- |
 | **TLP:CLEAR** | Sanerade risk- och statusdokument som denna tabell. Kan delas med utbildaren och lagras publikt. |
-| **TLP:AMBER** | Detaljerade interna granskningsunderlag, exempelvis skanneroutput eller loggutdrag. Dela bara med Team 2 och utbildaren. |
+| **TLP:AMBER** | Detaljerade interna granskningsunderlag, exempelvis skannerresultat eller loggutdrag. Dela bara med Team 2 och utbildaren. |
 | **TLP:AMBER+STRICT** | Källmaterial som inte ska spridas utanför mottagargruppen, exempelvis runtime-specifika CronJob- och åtkomstuppgifter. |
-| **TLP:RED** | Webhooks, nycklar, tokens, flaggvarden och andra autentiseringsuppgifter. Aldrig i Git, issues eller Discord. |
+| **TLP:RED** | Webhooks, nycklar, tokens, flaggvärden och andra autentiseringsuppgifter. Aldrig i Git, issues eller Discord. |
 
-## Rekommenderad fortsattning
+## Rekommenderad fortsättning
 
-1. Komplettera APP-07 med ett sanerat riskregister: evidens, status, ATT&CK-koppling, osakerhet och ansvarig kontroll.
-2. Dokumentera Trivy/Discord-installationen som driftbevis utan hemligheter och gor den reproducerbar som manifest eller IaC nar teamet ar redo.
-3. Markera de aldre sakerhetsrapporterna som historiska eller uppdatera deras status och kodlankar efter separat review.
-4. Fortsatt kontrollera att nya images ar signerade, har SBOM/attestering och att policykontrollen nekar osignerade images.
+1. Komplettera APP-07 med ett sanerat riskregister: evidens, status, ATT&CK-koppling, osäkerhet och ansvarig kontroll.
+2. Dokumentera Trivy/Discord-installationen som driftbevis utan hemligheter och gör den reproducerbar som manifest eller IaC när teamet är redo.
+3. Markera de äldre säkerhetsrapporterna som historiska eller uppdatera deras status och kodlänkar efter en separat granskning.
+4. Fortsätt kontrollera att nya images är signerade, har SBOM/attestering och att policykontrollen nekar osignerade images.
 
 ## Referenser
 
