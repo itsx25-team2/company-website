@@ -25,6 +25,9 @@ förbättringssteg på ett pedagogiskt och säkert sätt.
 5. Trivy CronJob och Discord-rapportering dokumenterades korrekt som
    driftverifierade i Kubernetes enligt Fajks bekräftelse, men ännu inte
    reproducerbara från Git.
+6. Infra-repots PR #78 granskades som kompletterande evidens. Den
+   arbetssammanfattningen bekräftar att Trivy/Discord-flödet testats i K3s,
+   utan att tillföra några hemliga värden eller versionerade manifest.
 
 ## Resultat
 
