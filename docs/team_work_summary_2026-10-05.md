@@ -22,12 +22,13 @@ förbättringssteg på ett pedagogiskt och säkert sätt.
    ATT&CK, status, tilltro och informationsklassning.
 4. SQL injection, IDOR, hemlighetshantering, CSRF/cookies, Jinja-injektion,
    SBOM, image-signering och supply-chain-kontroller analyserades defensivt.
-5. Trivy CronJob och Discord-rapportering dokumenterades korrekt som
-   driftverifierade i Kubernetes enligt Fajks bekräftelse, men ännu inte
-   reproducerbara från Git.
+5. Fajks Discord-uppdatering bekräftade att Discord-webhook, Secret, RBAC,
+   Trivy CronJob och en testad engångskörning finns i K3s. Inga hemliga värden
+   dokumenterades.
 6. Infra-repots PR #78 granskades som kompletterande evidens. Den
-   arbetssammanfattningen bekräftar att Trivy/Discord-flödet testats i K3s,
-   utan att tillföra några hemliga värden eller versionerade manifest.
+   arbetssammanfattningen bekräftar att Trivy/Discord-flödet testats i K3s.
+   PR #25 innehåller däremot bara dokumentation och inte de manifest som
+   behövs för att återskapa kontrollen från Git.
 
 ## Resultat
 
@@ -37,9 +38,9 @@ förbättringssteg på ett pedagogiskt och säkert sätt.
   verifieringar visar att de centrala Workshop 4-kontrollerna är införda.
 - Signerade images, SBOM/attestering och policykontroll är dokumenterade som
   verifierade skydd mot supply-chain-risk.
-- Trivy/Discord behöver dokumenteras eller versionshanteras vidare för att
-  installationen ska kunna granskas och återställas utan att hemligheter
-  hamnar i Git.
+- Trivy/Discord är verifierad i drift, men icke-hemliga manifest och en
+  återställningsrutin behöver versionshanteras för att kontrollen ska kunna
+  granskas och återskapas utan att hemligheter hamnar i Git.
 - Ingen applikationskod, Kubernetes-konfiguration eller live-data ändrades
   under dagens dokumentationsarbete.
 
