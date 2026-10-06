@@ -4,6 +4,8 @@ metadata:
   name: company-website
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: company-website
@@ -13,38 +15,74 @@ spec:
         app: company-website
         git.commit: ${GIT_COMMIT}
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: fix-data-permissions
+          image: ${DEPLOY_IMAGE}
+          command: ["sh", "-c", "chown -R 10001:10001 /data"]
+          securityContext:
+            runAsNonRoot: false
+            runAsUser: 0
+            runAsGroup: 0
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+          volumeMounts:
+            - name: data
+              mountPath: /data
       containers:
-      - name: web
-        image: ${DEPLOY_IMAGE}
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 7000
-        env:
-        - name: FLASK_DEBUG
-          value: "false"
-        - name: SESSION_COOKIE_SECURE
-          value: "true"
-        - name: SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              name: company-website-secrets
-              key: secret-key
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: 7000
-          initialDelaySeconds: 5
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /healthz
-            port: 7000
-          initialDelaySeconds: 3
-          periodSeconds: 5
-        volumeMounts:
-        - name: data
-          mountPath: /app/data
+        - name: web
+          image: ${DEPLOY_IMAGE}
+          imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - containerPort: 7000
+          env:
+            - name: FLASK_DEBUG
+              value: "false"
+            - name: SESSION_COOKIE_SECURE
+              value: "true"
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: company-website-secrets
+                  key: secret-key
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 7000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 7000
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+            - name: tmp
+              mountPath: /tmp
       volumes:
-      - name: data
-        persistentVolumeClaim:
-          claimName: company-website-data
+        - name: data
+          persistentVolumeClaim:
+            claimName: company-website-data
+        - name: tmp
+          emptyDir: {}
