@@ -4,5 +4,5 @@ app = create_app()
 
 if __name__ == "__main__":
     import os
-    debug_mode = os.environ.get('FLASK_DEBUG', 'true').lower() not in ('0', 'false', 'no')
+    debug_mode = os.environ.get('FLASK_DEBUG', 'false').lower() not in ('0', 'false', 'no')
     app.run(debug=debug_mode, port=7000)

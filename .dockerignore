@@ -10,6 +10,7 @@ __pycache__/
 .eggs/
 venv/
 .env
+.env.*
 .pytest_cache/
 
 # Build artifacts
@@ -19,6 +20,9 @@ dist/
 # Local data & tests
 data/
 tests/
+kubeconfig
+kubeconfig.*
+*.kubeconfig
 
 # Deployment configs
 k8s/

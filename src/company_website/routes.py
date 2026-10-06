@@ -51,7 +51,7 @@ def profile():
 def view_profile(id):
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE id = ?", (id,))
+    cursor.execute("SELECT * FROM users WHERE id = ? AND enabled = 1", (id,))
     row = cursor.fetchone()
     conn.close()
     if not row:
@@ -131,18 +131,15 @@ def edit_profile(id):
         last_name = request.form.get('last_name', '')
         email = request.form.get('email', '')
         about = request.form.get('about', '')
-        role = request.form.get('role', '')
-        internal_notes = request.form.get('internal_notes', '')
         email_signature = request.form.get('email_signature', user.email_signature)
 
         conn = get_db()
         cursor = conn.cursor()
         cursor.execute('''
             UPDATE users
-            SET first_name = ?, last_name = ?, email = ?, about = ?, role = ?, internal_notes = ?,
-                email_signature = ?
-            WHERE id = ?
-        ''', (first_name, last_name, email, about, role, internal_notes, email_signature, id))
+            SET first_name = ?, last_name = ?, email = ?, about = ?, email_signature = ?
+            WHERE id = ? AND enabled = 1
+        ''', (first_name, last_name, email, about, email_signature, id))
         conn.commit()
         conn.close()
 
@@ -157,7 +154,9 @@ def edit_profile(id):
 def employees():
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT id, username, first_name, last_name, role FROM users")
+    cursor.execute(
+        "SELECT id, username, first_name, last_name, role FROM users WHERE enabled = 1"
+    )
     rows = cursor.fetchall()
     conn.close()
     employees_list = []

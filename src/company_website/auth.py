@@ -2,23 +2,12 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash
 
-from .db import get_db, get_legacy_db
+from .db import get_db
 from .models import User
 
 auth_bp = Blueprint('auth', __name__)
 
 login_manager = LoginManager()
-
-
-def _get_legacy_user(username, password):
-    conn = get_legacy_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM legacy_users WHERE username = ?", (username,))
-    row = cursor.fetchone()
-    conn.close()
-    if row and check_password_hash(row['password_hash'], password):
-        return row
-    return None
 
 
 @login_manager.user_loader
@@ -52,27 +41,16 @@ def login():
         username = request.form.get('username', '')
         password = request.form.get('password', '')
 
-        legacy_row = _get_legacy_user(username, password)
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT * FROM users WHERE username = ? AND enabled = 1",
+            (username,),
+        )
+        row = cursor.fetchone()
+        conn.close()
 
-        row = None
-        if legacy_row:
-            conn = get_db()
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM users WHERE username = ?", (legacy_row['username'],))
-            row = cursor.fetchone()
-            conn.close()
-        else:
-            conn = get_db()
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
-            row = cursor.fetchone()
-            conn.close()
-            if row and row['username'] != 'flag' and check_password_hash(row['password_hash'], password):
-                pass
-            else:
-                row = None
-
-        if row and not row['enabled']:
+        if row and not check_password_hash(row['password_hash'], password):
             row = None
 
         if row:
