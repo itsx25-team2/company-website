@@ -3,7 +3,7 @@ name: Deploy to K3s
 on:
   workflow_dispatch:
   push:
-    branches: ["main"]
+    branches: [ "main" ]
 
 jobs:
   deploy:
@@ -20,7 +20,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
-          python-version: "3.12"
+          python-version: '3.12'
           cache: pip
 
       - name: Run tests
@@ -80,26 +80,25 @@ jobs:
       # --- Network connectivity to K3s node ---
       - name: Generate Ephemeral Headscale Key
         id: generate_key
-        env:
-          HEADSCALE_URL: ${{ secrets.HEADSCALE_URL }}
-          HEADSCALE_API_KEY: ${{ secrets.HEADSCALE_API_KEY }}
-          HEADSCALE_USER_ID: ${{ vars.HEADSCALE_USER_ID }}
         run: |
           EXPIRATION=$(date -u -d '+10 minutes' +%Y-%m-%dT%H:%M:%SZ)
-          REQUEST=$(jq -n \
-            --argjson user "$HEADSCALE_USER_ID" \
-            --arg expiration "$EXPIRATION" \
-            '{user: $user, ephemeral: true, reusable: false, expiration: $expiration, aclTags: ["tag:github-runner"]}')
 
-          RESPONSE=$(curl -s -f -X POST "$HEADSCALE_URL/api/v1/preauthkey" \
-            -H "Authorization: Bearer $HEADSCALE_API_KEY" \
+          RESPONSE=$(curl -s -f -X POST "${{ secrets.HEADSCALE_URL }}/api/v1/preauthkey" \
+            -H "Authorization: Bearer ${{ secrets.HEADSCALE_API_KEY }}" \
             -H "Content-Type: application/json" \
-            -d "$REQUEST")
+            -d '{
+                  "user": ${{ vars.HEADSCALE_USER_ID }},
+                  "ephemeral": true,
+                  "reusable": false,
+                  "expiration": "'"$EXPIRATION"'",
+                  "aclTags": ["tag:github-runner"]
+                }')
 
           EPHEMERAL_KEY=$(echo "$RESPONSE" | jq -r '.preAuthKey.key')
 
           if [ -z "$EPHEMERAL_KEY" ] || [ "$EPHEMERAL_KEY" == "null" ]; then
             echo "Error: Failed to retrieve key from Headscale API"
+            echo "Response: $RESPONSE"
             exit 1
           fi
 
@@ -135,11 +134,9 @@ jobs:
 
       # --- Configure kubectl for remote k3s ---
       - name: Configure kubeconfig
-        env:
-          KUBECONFIG_DATA: ${{ secrets.KUBECONFIG }}
         run: |
           mkdir -p ~/.kube
-          printf '%s' "$KUBECONFIG_DATA" | base64 -d > ~/.kube/config
+          echo "${{ secrets.KUBECONFIG }}" | base64 -d > ~/.kube/config
           chmod 600 ~/.kube/config
           kubectl get pods -n default
 
