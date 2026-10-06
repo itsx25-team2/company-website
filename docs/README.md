@@ -11,6 +11,11 @@ Workshop 3 och Workshop 4.
   giltighetstid, säker rotation, verifiering och återkallning.
 - [workshop3_setup_status.md](workshop3_setup_status.md): teknisk setup,
   verifieringar och kvarvarande uppföljning.
+- [mitre_ti_tlp_summary_2026-10-05.md](mitre_ti_tlp_summary_2026-10-05.md):
+  sanerad MITRE ATT&CK-, Threat Intelligence- och TLP-bedömning med
+  riskregister och verifieringar.
+- [team_work_summary_2026-10-06.md](team_work_summary_2026-10-06.md):
+  uppföljning av PR #32, hardening och manuell driftsverifiering.
 - [team_work_summary_2026-09-21.md](team_work_summary_2026-09-21.md):
   sammanfattning av dagens gemensamma arbete.
 - [team_work_summary_2026-09-24.md](team_work_summary_2026-09-24.md):

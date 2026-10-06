@@ -11,11 +11,24 @@ och defensiva analyser i projektet.
 | [Arbetssammanfattning 2026-09-24](work_summary_2026-09-24.md) | Individuellt arbete med MagicDNS, Ingress, image-spårbarhet, Cosign-policy och verifierad rollback. |
 | [Arbetssammanfattning 2026-09-28](work_summary_2026-09-28.md) | Individuellt arbete med Workshop 4, SBOM, säkerhetshärdning och verifiering. |
 | [Arbetssammanfattning 2026-09-29](work_summary_2026-09-29.md) | Efterkontroll av Workshop 3.5-4 och Workshop 4 samt lokal och driftsatt funktionsverifiering. |
+| [Arbetssammanfattning 2026-10-06](work_summary_2026-10-06.md) | Uppföljning av PR #32 med manuell profilkontroll, säkerhetstester och driftsverifiering. |
+| [Teamsammanfattning 2026-10-06](../../docs/team_work_summary_2026-10-06.md) | Gruppens uppföljning av hardening, tester och närvaro. |
 | [Teamsammanfattning 2026-09-29](../../docs/team_work_summary_2026-09-29.md) | Gruppens efterkontroll, närvaro och verifierade live-status. |
 | [Teamsammanfattning 2026-09-28](../../docs/team_work_summary_2026-09-28.md) | Gruppens Workshop 4-arbete, närvaro, tester och nästa steg. |
 | [Teamsammanfattning 2026-09-24](../../docs/team_work_summary_2026-09-24.md) | Dagens verifierade arbete med MagicDNS, Ingress, image-spårbarhet och Cosign. |
 
-## Aktuell status 2026-09-29
+## Aktuell status 2026-10-06
+
+- PR #32 är mergad och den aktuella deploymenten använder rootlös körning,
+  skrivskyddat rotfilsystem, initcontainer för SQLite-volymen och
+  `Recreate`-strategi vid rollout.
+- Jag verifierade manuellt med ett tilldelat testkonto i utbildarens kursmiljö
+  att en profiländring sparas, ligger kvar efter omladdning och fungerar efter
+  ut- och inloggning. Testvärdet återställdes.
+- Den fullständiga lokala testsviten gav `22 passed` och fyra riktade
+  säkerhetstester för profilbehörighet och avstängda konton gav `4 passed`.
+- Aktuell driftsstatus är verifierad med HTTP `200` för startsidan och
+  `/healthz` med ansluten databas.
 
 - Workshop 4 är integrerad, säkerhetshärdad och mergad till `main`.
 - Branchkontrollen med 19 tester och Docker-build är grön.
@@ -62,4 +75,3 @@ mergats länkar till `member/itzmejonny92`.
 - Dokumentera egna slutsatser och osäkerheter.
 - Lägg aldrig in credentials, privata nycklar, tokens eller flaggvärden.
 - Uppdatera länkarna ovan när personliga infra-dokument mergas till `main`.
-
