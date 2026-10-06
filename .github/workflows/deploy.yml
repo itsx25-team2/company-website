@@ -3,7 +3,7 @@ name: Deploy to K3s
 on:
   workflow_dispatch:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   deploy:
@@ -20,7 +20,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
-          python-version: '3.12'
+          python-version: "3.12"
           cache: pip
 
       - name: Run tests
@@ -148,3 +148,19 @@ jobs:
           envsubst < k8s/deployment.yaml > /tmp/deployment.yaml
           kubectl apply -f /tmp/deployment.yaml -f k8s/pvc.yaml -f k8s/service.yaml -f k8s/ingress.yaml
           kubectl rollout status deployment/company-website --timeout=120s
+
+      - name: Collect deployment diagnostics
+        if: failure()
+        run: |
+          if [ ! -f "$HOME/.kube/config" ]; then
+            echo "Kubeconfig is unavailable; skipping cluster diagnostics"
+            exit 0
+          fi
+
+          kubectl get pods -l app=company-website -o wide || true
+          kubectl describe pods -l app=company-website || true
+          kubectl get pvc company-website-data || true
+          kubectl get events --sort-by=.metadata.creationTimestamp | tail -n 50 || true
+          kubectl logs -l app=company-website --all-containers=true --prefix --tail=100 || true
+          kubectl logs -l app=company-website -c web --previous --tail=100 || true
+          kubectl logs -l app=company-website -c fix-data-permissions --previous --tail=100 || true
