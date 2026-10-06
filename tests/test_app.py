@@ -3,8 +3,8 @@ import sqlite3
 import pytest
 from werkzeug.security import generate_password_hash
 from company_website import create_app
-from company_website import auth
 from company_website.config import Config
+from company_website.db import init_db
 from company_website.models import User
 from company_website.routes import _contains_unsupported_email_syntax, _render_email_preview
 
@@ -12,7 +12,6 @@ from company_website.routes import _contains_unsupported_email_syntax, _render_e
 @pytest.fixture
 def app(monkeypatch, tmp_path):
     monkeypatch.setattr(Config, 'DATABASE', str(tmp_path / 'database.db'))
-    monkeypatch.setattr(Config, 'LEGACY_AUTH_DATABASE', str(tmp_path / 'legacy_auth.db'))
     return create_app({
         'TESTING': True,
         'SECRET_KEY': 'test-secret-key',
@@ -86,30 +85,37 @@ def test_email_preview_rejects_executable_template_syntax(template):
         _render_email_preview(template, user)
 
 
-def test_legacy_lookup_uses_literal_credentials(monkeypatch, tmp_path):
-    database_path = tmp_path / 'legacy.db'
-    conn = sqlite3.connect(database_path)
-    conn.execute(
+def test_login_rejects_outdated_legacy_password(client, app, monkeypatch, tmp_path):
+    legacy_database_path = tmp_path / 'legacy_auth.db'
+    monkeypatch.setattr(Config, 'LEGACY_AUTH_DATABASE', str(legacy_database_path), raising=False)
+
+    legacy_conn = sqlite3.connect(legacy_database_path)
+    legacy_conn.execute(
         'CREATE TABLE legacy_users '
         '(id INTEGER PRIMARY KEY, username TEXT, password_hash TEXT)'
     )
-    conn.execute(
+    legacy_conn.execute(
         'INSERT INTO legacy_users (id, username, password_hash) VALUES (?, ?, ?)',
-        (1, 'dev', generate_password_hash('known-password')),
+        (1, 'dev', generate_password_hash('outdated-password')),
+    )
+    legacy_conn.commit()
+    legacy_conn.close()
+
+    conn = sqlite3.connect(Config.DATABASE)
+    conn.execute(
+        'UPDATE users SET password_hash = ? WHERE id = 1',
+        (generate_password_hash('current-password'),),
     )
     conn.commit()
     conn.close()
 
-    def connect_test_database():
-        test_conn = sqlite3.connect(database_path)
-        test_conn.row_factory = sqlite3.Row
-        return test_conn
+    response = client.post('/login', data={
+        'username': 'dev',
+        'password': 'outdated-password',
+    })
 
-    monkeypatch.setattr(auth, 'get_legacy_db', connect_test_database)
-
-    assert auth._get_legacy_user('dev', 'known-password')['username'] == 'dev'
-    assert auth._get_legacy_user("dev' OR 1=1 --", 'anything') is None
-    assert auth._get_legacy_user('dev', "' OR 1=1 --") is None
+    assert response.status_code == 200
+    assert b'Invalid username or password.' in response.data
 
 
 def _login_as(client, user_id=1):
@@ -120,7 +126,6 @@ def _login_as(client, user_id=1):
 
 def test_app_requires_secret_key(monkeypatch, tmp_path):
     monkeypatch.setattr(Config, 'DATABASE', str(tmp_path / 'database.db'))
-    monkeypatch.setattr(Config, 'LEGACY_AUTH_DATABASE', str(tmp_path / 'legacy_auth.db'))
 
     with pytest.raises(RuntimeError, match='SECRET_KEY'):
         create_app({'SECRET_KEY': None})
@@ -143,13 +148,47 @@ def test_user_cannot_edit_another_profile(client):
     assert client.post('/profiles/3/edit', data={'first_name': 'Changed'}).status_code == 403
 
 
+def test_profile_edit_ignores_server_managed_fields(client):
+    _login_as(client, user_id=1)
+
+    response = client.post('/profiles/1/edit', data={
+        'first_name': 'Changed',
+        'role': 'Administrator',
+        'internal_notes': 'Attacker-controlled notes',
+    })
+
+    assert response.status_code == 302
+    conn = sqlite3.connect(Config.DATABASE)
+    role, internal_notes = conn.execute(
+        'SELECT role, internal_notes FROM users WHERE id = 1'
+    ).fetchone()
+    conn.close()
+    assert role == 'Full Stack Developer'
+    assert internal_notes != 'Attacker-controlled notes'
+
+
+def test_disabled_profiles_are_not_visible(client):
+    _login_as(client, user_id=1)
+
+    assert client.get('/profiles/3').status_code == 404
+    employees_response = client.get('/employees')
+    assert employees_response.status_code == 200
+    assert b'alice' not in employees_response.data
+
+
 def test_other_users_internal_notes_are_hidden(client):
     _login_as(client, user_id=1)
+    conn = sqlite3.connect(Config.DATABASE)
+    conn.execute(
+        "UPDATE users SET enabled = 1, internal_notes = 'Private Alice note' WHERE id = 3"
+    )
+    conn.commit()
+    conn.close()
 
     response = client.get('/profiles/3')
 
     assert response.status_code == 200
-    assert b'Secret project codename' not in response.data
+    assert b'Private Alice note' not in response.data
 
 
 def test_logout_requires_post(client):
@@ -175,3 +214,24 @@ def test_account_migration_enables_only_dev(app):
 
     assert rows['dev'] == 1
     assert all(enabled == 0 for username, enabled in rows.items() if username != 'dev')
+
+
+def test_seed_migration_removes_sensitive_notes(app):
+    conn = sqlite3.connect(Config.DATABASE)
+    conn.execute(
+        "UPDATE users SET internal_notes = ? WHERE id = 1",
+        ('Remember to rotate the dev-secret-key before production. Also, the staging DB password is staging123.',),
+    )
+    conn.execute(
+        "DELETE FROM schema_migrations WHERE version = '007_remove_sensitive_seed_notes.sql'"
+    )
+    conn.commit()
+    conn.close()
+
+    init_db()
+
+    conn = sqlite3.connect(Config.DATABASE)
+    notes = conn.execute('SELECT internal_notes FROM users').fetchall()
+    conn.close()
+
+    assert all(note is None for (note,) in notes)
