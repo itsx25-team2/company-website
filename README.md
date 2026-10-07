@@ -7,8 +7,18 @@ automatiskt till teamets K3s-kluster.
 
 ## Aktuell status
 
+- PR #32 är mergad och driftsatt på `main`. Den aktuella hardeningen kör
+  applikationen som användare `10001`, använder skrivskyddat rotfilsystem och
+  förbereder SQLite-volymens rättigheter i en initcontainer.
+- Deploymentkörning `37451241461` efter PR #32 är grön. En manuell kontroll
+  2026-10-06 med ett tilldelat testkonto i utbildarens kursmiljö bekräftade
+  profilflöde, omladdning och ny inloggning i drift. Riktade
+  behörighetstester och den fullständiga testsviten är också gröna.
+- SQLite använder en `ReadWriteOnce`-volym. Deploymenten använder därför
+  `Recreate` för att undvika volymkonflikter, vilket kan ge ett kort avbrott
+  vid rollout.
 - Workshop 4 mergades genom PR #21 och dokumentationens efterkontroll genom
-  PR #22. Senaste mergecommit är `64bb55f`.
+  PR #22 (`64bb55f`).
 - Deploymentkörning `36435042346`, försök 2, är grön med 19 tester,
   CycloneDX-SBOM, Cosign-attestering, signering och verifierad K3s-rollout.
 - Den deployade imagen är låst till digest `sha256:bf1b2a60...` och podden är
@@ -67,6 +77,8 @@ branch och pull request.
 - [Dokumentationsöversikt](docs/README.md)
 - [Produktbacklog](docs/product_backlog.md)
 - [Workshop 3 - setup och verifiering](docs/workshop3_setup_status.md)
+- [MITRE ATT&CK, Threat Intelligence och TLP](docs/mitre_ti_tlp_summary_2026-10-05.md)
+- [Teamsammanfattning 2026-10-06](docs/team_work_summary_2026-10-06.md)
 - [Teamsammanfattning 2026-09-21](docs/team_work_summary_2026-09-21.md)
 - [Teamsammanfattning 2026-09-24](docs/team_work_summary_2026-09-24.md)
 - [Teamsammanfattning 2026-09-28](docs/team_work_summary_2026-09-28.md)
