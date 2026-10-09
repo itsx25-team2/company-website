@@ -14,6 +14,11 @@ Workshop 3 och Workshop 4.
 - [mitre_ti_tlp_summary_2026-10-05.md](mitre_ti_tlp_summary_2026-10-05.md):
   sanerad MITRE ATT&CK-, Threat Intelligence- och TLP-bedömning med
   riskregister och verifieringar.
+- [app05_local_course_analysis.md](app05_local_course_analysis.md): sanerad
+  defensiv sammanställning av verifierade observationer i den lokala
+  kursmiljön.
+- [app06_live_course_scope.md](app06_live_course_scope.md): scope,
+  stoppgränser och defensiv arbetsrutin innan nya moment i skarp kursmiljö.
 - [team_work_summary_2026-10-06.md](team_work_summary_2026-10-06.md):
   uppföljning av PR #32, hardening och manuell driftsverifiering.
 - [team_work_summary_2026-09-21.md](team_work_summary_2026-09-21.md):
